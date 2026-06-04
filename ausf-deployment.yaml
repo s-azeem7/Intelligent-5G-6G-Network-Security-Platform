@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ausf-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ausf
+  template:
+    metadata:
+      labels:
+        app: ausf
+    spec:
+      containers:
+      - name: ausf
+        image: ausf:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5002

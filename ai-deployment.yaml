@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-detector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai
+  template:
+    metadata:
+      labels:
+        app: ai
+    spec:
+      containers:
+      - name: ai
+        image: ai-detector:v1
+        volumeMounts:
+        - name: logs
+          mountPath: /root/5g-security-platform/logs
+      volumes:
+      - name: logs
+        hostPath:
+          path: /root/5g-security-platform/logs
