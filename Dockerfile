@@ -4,9 +4,9 @@ WORKDIR /app
 
 COPY . /app
 
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir --timeout=200 --retries=10 -r requirements.txt
-
+RUN pip install --upgrade pip setuptools wheel --no-cache-dir && \
+    pip install --no-cache-dir --timeout=300 --retries=20 \
+    flask requests prometheus_client joblib scikit-learn pandas numpy
 EXPOSE 5000
 
 CMD ["python3", "core/amf.py"]

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: amf
-        image: amf-aiops:v1
+        image: amf-service:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000

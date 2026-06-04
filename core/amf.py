@@ -37,10 +37,9 @@ app = Flask(__name__)
 # -----------------------------
 # CORE SERVICES
 # -----------------------------
-NRF_URL = "http://localhost:8000/nnrf-nfm/v1/nf-instances"
-AUSF_URL = "http://localhost:5002/nausf-auth/v1/ue-authentications"
-SMF_URL = "http://localhost:5001/nsmf-pdusession/v1/sm-contexts"
-
+NRF_URL = "http://nrf-service:5001/nnrf-nfm/v1/nf-instances"
+AUSF_URL = "http://ausf-service:5002/nausf-auth/v1/ue-authentications"
+SMF_URL = "http://smf-service:5003/nsmf-pdusession/v1/sm-contexts"
 ALLOWED_SLICES = ["slice-a", "slice-b"]
 
 # -----------------------------

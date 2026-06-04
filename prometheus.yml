@@ -5,3 +5,15 @@ scrape_configs:
   - job_name: "amf"
     static_configs:
       - targets: ["localhost:5000"]
+
+  - job_name: "ausf"
+    static_configs:
+      - targets: ["localhost:5002"]
+
+  - job_name: "smf"
+    static_configs:
+      - targets: ["localhost:5003"]
+
+  - job_name: "nrf"
+    static_configs:
+      - targets: ["localhost:5001"]
