@@ -61,10 +61,35 @@ def health():
     })
 
 
+@app.route("/health", methods=["GET"])
+def health():
+    return jsonify({
+        "service": "NRF",
+        "status": "UP"
+    })
+
+
 if __name__ == "__main__":
+    import ssl
+
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+
+    # Server certificate
+    context.load_cert_chain(
+        certfile="certs/nrf.crt",
+        keyfile="certs/nrf.key"
+    )
+
+    # CA that signs client certs
+    context.load_verify_locations("certs/ca.crt")
+    # THIS ENABLES mTLS (client verification)
+    context.verify_mode = ssl.CERT_REQUIRED
+    # Optional: stronger security
+    context.check_hostname = False
     app.run(
         host="0.0.0.0",
         port=5001,
+        ssl_context=context,
         debug=False,
         use_reloader=False
-   )
+    )

@@ -37,7 +37,7 @@ app = Flask(__name__)
 # -----------------------------
 # CORE SERVICES
 # -----------------------------
-NRF_URL = "http://nrf-service:5001/nnrf-nfm/v1/nf-instances"
+NRF_URL = "https://nrf-service:5001/nnrf-nfm/v1/nf-instances"
 AUSF_URL = "http://ausf-service:5002/nausf-auth/v1/ue-authentications"
 SMF_URL = "http://smf-service:5003/nsmf-pdusession/v1/sm-contexts"
 ALLOWED_SLICES = ["slice-a", "slice-b"]
@@ -153,7 +153,9 @@ def register_ue():
                 "nfType": "AMF",
                 "sliceInfo": slice_id
             },
-            timeout=5
+            cert=("/app/certs/amf.crt", "/app/certs/amf.key"),
+            verify="/app/certs/ca.crt",
+	    timeout=5
         )
     except Exception as e:
         return jsonify({"status": "NRF unavailable", "error": str(e)}), 500

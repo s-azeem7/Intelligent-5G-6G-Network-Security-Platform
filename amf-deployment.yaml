@@ -14,7 +14,15 @@ spec:
     spec:
       containers:
       - name: amf
-        image: amf-service:latest
+        image:  amf-aiops:v1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
+volumeMounts:
+  - name: amf-tls
+    mountPath: /app/certs
+
+volumes:
+  - name: amf-tls
+    secret:
+      secretName: amf-tls
