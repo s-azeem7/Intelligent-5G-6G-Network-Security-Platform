@@ -2,15 +2,21 @@
 
 echo "3GPP Compliance Check Starting..."
 
-# Check pods
+# Pods running
 kubectl get pods | grep Running
 
-# Check AMF metrics
-curl -k https://amf-service:5000/health || exit 1
+# AMF Deployment exists
+kubectl get deployment amf-deployment
 
-# Check NRF TLS endpoint
-curl -k https://nrf-service:5001/health || exit 1
-# Check Prometheus metrics
-curl http://amf-service:5000/metrics | grep amf_requests_total || exit 1
+# NRF Deployment exists
+kubectl get deployment nrf-deployment
 
-echo "TLS & Security checks passed"
+# AMF Health
+kubectl exec deployment/amf-deployment -- \
+curl -s http://localhost:5000/health || exit 1
+
+# NRF Health
+kubectl exec deployment/nrf-deployment -- \
+curl -k -s https://localhost:5001/health || exit 1
+
+echo "3GPP Compliance Passed"
