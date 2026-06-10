@@ -4,8 +4,8 @@ WORKDIR /app
 
 COPY . /app
 COPY certs/ /app/certs/
-RUN pip install --no-cache-dir --retries 10 --timeout 200 \
-    flask requests prometheus_client joblib scikit-learn 
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir --timeout=300 --retries=10 -r requirements.txt
 EXPOSE 5000
 
 CMD ["python3", "core/amf.py"]
