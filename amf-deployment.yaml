@@ -18,11 +18,10 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
-volumeMounts:
-  - name: amf-tls
-    mountPath: /app/certs
-
-volumes:
-  - name: amf-tls
-    secret:
-      secretName: amf-tls
+        volumeMounts:
+        - name: amf-tls
+          mountPath: /app/certs
+      volumes:
+      - name: amf-tls
+        secret:
+          secretName: amf-tls
