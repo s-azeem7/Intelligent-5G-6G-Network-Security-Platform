@@ -1,95 +1,57 @@
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
 from flask import Flask, request, jsonify
 import logging
 import os
+import ssl
 
-app = Flask(__name__)
+# -----------------------------
+# PROMETHEUS METRICS
+# -----------------------------
+REQUEST_TOTAL = Counter("nrf_requests_total", "Total NRF requests")
+REGISTRATION_TOTAL = Counter("nrf_registrations_total", "Total NF registrations")
 
-# Logs
+# -----------------------------
+# LOGGING
+# -----------------------------
 os.makedirs("/root/5g-security-platform/logs", exist_ok=True)
-
 logging.basicConfig(
     filename="/root/5g-security-platform/logs/nrf.log",
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(message)s"
 )
 
-# Slice-aware registry
-registry = {
-    "slice-a": {},
-    "slice-b": {}
-}
+app = Flask(__name__)
 
+# In-memory NF registry
+nf_registry = {}
 
-@app.route("/nnrf-nfm/v1/nf-instances", methods=["PUT", "GET"])
-def nf_instances():
+@app.route("/nnrf-nfm/v1/nf-instances", methods=["PUT"])
+def register_nf():
+    REQUEST_TOTAL.inc()
+    data = request.json
+    nf_id = data.get("nfInstanceId")
+    nf_registry[nf_id] = data
+    REGISTRATION_TOTAL.inc()
+    logging.info(f"NF registered: {nf_id}, type: {data.get('nfType')}, slice: {data.get('sliceInfo')}")
+    return jsonify({"status": "registered"}), 201
 
-    # REGISTER NF
-    if request.method == "PUT":
-
-        data = request.json
-
-        nf_id = data.get("nfInstanceId")
-        nf_type = data.get("nfType")
-        slice_id = data.get("sliceInfo", "slice-a")
-
-        if slice_id not in registry:
-            registry[slice_id] = {}
-
-        registry[slice_id][nf_id] = {
-            "nfInstanceId": nf_id,
-            "nfType": nf_type,
-            "sliceInfo": slice_id
-        }
-
-        logging.info(f"NF registered: {nf_id} in {slice_id}")
-
-        return jsonify({
-            "status": "registered",
-            "nf": nf_id,
-            "slice": slice_id
-        }), 201
-
-    # LIST ALL NFs (slice grouped view)
-    return jsonify(registry), 200
-
+@app.route("/nnrf-nfm/v1/nf-instances", methods=["GET"])
+def list_nf():
+    REQUEST_TOTAL.inc()
+    return jsonify(nf_registry), 200
 
 @app.route("/health", methods=["GET"])
 def health():
-    return jsonify({
-        "service": "NRF",
-        "status": "UP"
-    })
+    return jsonify({"service": "NRF", "status": "UP"})
 
+@app.route("/metrics")
+def metrics():
+    return generate_latest(), 200, {"Content-Type": CONTENT_TYPE_LATEST}
 
-@app.route("/health", methods=["GET"])
-def health():
-    return jsonify({
-        "service": "NRF",
-        "status": "UP"
-    })
-
-
-if __name__ == "__main__":
-    import ssl
-
+if __name__ == '__main__':
+    # mTLS configuration
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-
-    # Server certificate
-    context.load_cert_chain(
-        certfile="certs/nrf.crt",
-        keyfile="certs/nrf.key"
-    )
-
-    # CA that signs client certs
-    context.load_verify_locations("certs/ca.crt")
-    # THIS ENABLES mTLS (client verification)
+    context.load_cert_chain('certs/nrf.crt', 'certs/nrf.key')
+    context.load_verify_locations('certs/ca.crt')
     context.verify_mode = ssl.CERT_REQUIRED
-    # Optional: stronger security
-    context.check_hostname = False
-    app.run(
-        host="0.0.0.0",
-        port=5001,
-        ssl_context=context,
-        debug=False,
-        use_reloader=False
-    )
+    app.run(host='0.0.0.0', port=5001, ssl_context=context)
