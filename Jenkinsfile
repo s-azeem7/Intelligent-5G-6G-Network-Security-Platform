@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/s-azeem7/Intelligent-5G-6G-Network-Security-Platform.git'
+               git branch: 'main', url: 'https://github.com/s-azeem7/Intelligent-5G-6G-Network-Security-Platform.git'
             }
         }
 
