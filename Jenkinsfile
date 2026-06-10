@@ -35,5 +35,27 @@ pipeline {
             }
         }
 
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh 'kubectl apply -f amf-deployment.yaml'
+                sh 'kubectl apply -f nrf-deployment.yaml'
+                sh 'kubectl apply -f ausf-deployment.yaml'
+                sh 'kubectl apply -f smf-deployment.yaml'
+            }
+        }
+
+        stage('Apply Network Policies') {
+            steps {
+                sh 'kubectl apply -f security/'
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                sh 'kubectl get pods -A'
+                sh 'kubectl get networkpolicy -A'
+            }
+        }
     }
 }
