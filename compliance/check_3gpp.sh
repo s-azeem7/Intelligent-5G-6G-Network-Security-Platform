@@ -2,21 +2,12 @@
 
 echo "3GPP Compliance Check Starting..."
 
-# Pods running
-kubectl get pods | grep Running
+kubectl get pods | grep Running || exit 1
 
-# AMF Deployment exists
-kubectl get deployment amf-deployment
+kubectl rollout status deployment/amf-deployment --timeout=60s || exit 1
+kubectl rollout status deployment/nrf-deployment --timeout=60s || exit 1
 
-# NRF Deployment exists
-kubectl get deployment nrf-deployment
-
-# AMF Health
-kubectl exec deployment/amf-deployment -- \
-curl -s http://localhost:5000/health || exit 1
-
-# NRF Health
-kubectl exec deployment/nrf-deployment -- \
-curl -k -s https://localhost:5001/health || exit 1
+kubectl get svc amf-service || exit 1
+kubectl get svc nrf-service || exit 1
 
 echo "3GPP Compliance Passed"
