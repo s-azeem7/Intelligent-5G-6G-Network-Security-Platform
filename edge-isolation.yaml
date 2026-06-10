@@ -1,0 +1,16 @@
+# Deny all cross-namespace traffic
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-cross-namespace
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector: {}      # Allow only from same namespace
+  egress:
+  - to:
+    - podSelector: {}      # Allow only to same namespace
