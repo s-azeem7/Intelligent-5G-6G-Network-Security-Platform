@@ -4,7 +4,7 @@ import requests
 import logging
 import os
 import sys
-
+import ssl
 # -----------------------------
 # PROMETHEUS METRICS
 # -----------------------------
@@ -38,8 +38,8 @@ app = Flask(__name__)
 # CORE SERVICES
 # -----------------------------
 NRF_URL = "https://nrf-service:5001/nnrf-nfm/v1/nf-instances"
-AUSF_URL = "http://ausf-service:5002/nausf-auth/v1/ue-authentications"
-SMF_URL = "http://smf-service:5003/nsmf-pdusession/v1/sm-contexts"
+AUSF_URL = "https://ausf-service:5002/nausf-auth/v1/ue-authentications"
+SMF_URL = "https://smf-service:5003/nsmf-pdusession/v1/sm-contexts"
 ALLOWED_SLICES = ["slice-a", "slice-b"]
 
 # -----------------------------
@@ -189,6 +189,9 @@ def metrics():
 
 # -----------------------------
 # MAIN
-# -----------------------------
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
+if __name__ == '__main__':
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    context.load_cert_chain('certs/amf.crt', 'certs/amf.key')
+    context.load_verify_locations('certs/ca.crt')
+    context.verify_mode = ssl.CERT_REQUIRED
+    app.run(host='0.0.0.0', port=5000, ssl_context=context)
