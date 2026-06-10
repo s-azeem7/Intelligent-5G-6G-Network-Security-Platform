@@ -17,11 +17,11 @@ spec:
         image: nrf:v1
         ports:
         - containerPort: 5001
-volumeMounts:
-  - name: nrf-tls
-    mountPath: /app/certs
+        volumeMounts:
+        - name: nrf-tls
+          mountPath: /app/certs
 
-volumes:
-  - name: nrf-tls
-    secret:
-      secretName: nrf-tls
+      volumes:
+      - name: nrf-tls
+        secret:
+          secretName: nrf-tls
