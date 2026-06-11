@@ -23,6 +23,11 @@ pipeline {
             }
         }
 
+        stage('Build Base Image') {
+            steps {
+                sh 'docker build -t my-5g-base:latest -f Dockerfile.base .'
+            }
+       }
         stage('Build Images') {
             parallel {
                 stage('Build AMF') {
