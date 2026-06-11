@@ -1,10 +1,7 @@
-FROM python:3.10-slim
-
+FROM my-5g-base:latest
 WORKDIR /app
-
+COPY . /app
 COPY ai /app/ai
 COPY logs /app/logs
-
-RUN pip install flask scikit-learn numpy
 
 CMD ["python", "ai/log_stream.py"]
