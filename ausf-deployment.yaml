@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: ausf
-        image: ausf:v1
+        image: ausf-service:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5002
