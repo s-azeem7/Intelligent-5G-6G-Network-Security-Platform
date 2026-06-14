@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: nrf
-        image: nrf:v1
+        image: nrf-service:latest
         ports:
         - containerPort: 5001
         volumeMounts:
