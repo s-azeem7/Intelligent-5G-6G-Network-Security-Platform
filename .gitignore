@@ -3,3 +3,4 @@ logs/
 *.tar
 __pycache__/
 *.pyc
+certs/*.key
