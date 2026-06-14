@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: smf
-        image: smf:v1
+        image: smf-service:latest
         ports:
         - containerPort: 5003
