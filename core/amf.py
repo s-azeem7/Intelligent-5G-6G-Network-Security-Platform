@@ -116,7 +116,9 @@ def register_ue():
         auth = requests.post(
             AUSF_URL,
             json={"ueId": ue_id},
-            timeout=5
+            cert=("/app/certs/amf.crt", "/app/certs/amf.key"),
+            verify="/app/certs/ca.crt",
+			timeout=5
         )
 
         if auth.status_code != 200:
@@ -133,6 +135,8 @@ def register_ue():
         smf_response = requests.post(
             SMF_URL,
             json={"ueId": ue_id, "dnn": "internet"},
+            cert=("/app/certs/amf.crt", "/app/certs/amf.key"),
+            verify="/app/certs/ca.crt",
             timeout=5
         )
 
