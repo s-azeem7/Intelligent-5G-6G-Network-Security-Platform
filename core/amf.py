@@ -5,6 +5,15 @@ import logging
 import os
 import sys
 import ssl
+from collections import defaultdict
+from time import time
+
+# -----------------------------
+# IN-MEMORY TRACKERS (for AI features)
+# -----------------------------
+request_history = defaultdict(list)      # key=(ue_id, slice) -> list of timestamps
+failure_history = defaultdict(list)      # key=(ue_id, slice) -> list of failed auth timestamps
+
 # -----------------------------
 # PROMETHEUS METRICS
 # -----------------------------
@@ -47,7 +56,6 @@ ALLOWED_SLICES = ["slice-a", "slice-b"]
 # -----------------------------
 @app.route("/namf-comm/v1/ue-contexts", methods=["POST"])
 def register_ue():
-
     REQUEST_TOTAL.inc()
 
     data = request.json
@@ -55,39 +63,37 @@ def register_ue():
     slice_id = data.get("slice", "slice-a")
 
     # -------------------------
-    # AI THREAT DETECTION
+    # REAL-TIME FEATURE EXTRACTION (AI ke liye)
     # -------------------------
+    key = (ue_id, slice_id)
+    now = time()
+
+    # 1. Request Rate (RPM) - last 60 seconds
+    req_ts = request_history[key]
+    req_ts[:] = [t for t in req_ts if now - t < 60]
+    req_ts.append(now)
+    rpm = len(req_ts)
+
+    # 2. Failed Auth Count - last 60 seconds
+    fail_ts = failure_history[key]
+    fail_ts[:] = [t for t in fail_ts if now - t < 60]
+    failed_auth = len(fail_ts)
+
+    # 3. REAL AI CALL
     try:
-        if slice_id == "attacker-slice":
-            rpm = 120
-            failed_auth = 18
-        else:
-            rpm = 10
-            failed_auth = 0
-
         is_threat = predict_threat(rpm, failed_auth)
-
         if is_threat:
-
             THREAT_TOTAL.inc()
-
-            logging.warning(
-                f"AI ALERT: THREAT DETECTED | UE={ue_id} | Slice={slice_id}"
-            )
-
-            # SOC ALERT FILE (REAL-TIME)
+            logging.warning(f"AI ALERT: THREAT DETECTED | UE={ue_id} | Slice={slice_id} | RPM={rpm} | Failures={failed_auth}")
             with open("/root/5g-security-platform/ai/alerts.log", "a") as f:
-                f.write(f"THREAT | UE={ue_id} | SLICE={slice_id}\n")
-
+                f.write(f"THREAT | UE={ue_id} | SLICE={slice_id} | RPM={rpm} | FAILS={failed_auth}\n")
             BLOCKED_TOTAL.inc()
-
             return jsonify({
                 "status": "blocked_by_ai",
                 "reason": "ml_detected_anomaly",
                 "ue": ue_id,
                 "slice": slice_id
             }), 403
-
     except Exception as e:
         logging.error(f"AI Engine Error: {str(e)}")
 
@@ -96,11 +102,7 @@ def register_ue():
     # -----------------------------
     if slice_id not in ALLOWED_SLICES:
         BLOCKED_TOTAL.inc()
-
-        logging.warning(
-            f"Blocked unauthorized slice access: UE={ue_id}, Slice={slice_id}"
-        )
-
+        logging.warning(f"Blocked unauthorized slice access: UE={ue_id}, Slice={slice_id}")
         return jsonify({
             "status": "blocked",
             "reason": "unauthorized slice",
@@ -118,11 +120,12 @@ def register_ue():
             json={"ueId": ue_id},
             cert=("/app/certs/amf.crt", "/app/certs/amf.key"),
             verify="/app/certs/ca.crt",
-			timeout=5
+            timeout=5
         )
 
         if auth.status_code != 200:
             BLOCKED_TOTAL.inc()
+            failure_history[key].append(now)   # <-- FAILURE COUNT INCREMENT
             return jsonify({"status": "authentication failed"}), 401
 
     except Exception as e:
@@ -159,7 +162,7 @@ def register_ue():
             },
             cert=("/app/certs/amf.crt", "/app/certs/amf.key"),
             verify="/app/certs/ca.crt",
-	    timeout=5
+            timeout=5
         )
     except Exception as e:
         return jsonify({"status": "NRF unavailable", "error": str(e)}), 500
@@ -195,7 +198,7 @@ def metrics():
 # MAIN
 if __name__ == '__main__':
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    context.load_cert_chain('certs/amf.crt', 'certs/amf.key')
-    context.load_verify_locations('certs/ca.crt')
+    context.load_cert_chain('/app/certs/amf.crt', '/app/certs/amf.key')
+    context.load_verify_locations('/app/certs/ca.crt')
     context.verify_mode = ssl.CERT_REQUIRED
     app.run(host='0.0.0.0', port=5000, ssl_context=context)
