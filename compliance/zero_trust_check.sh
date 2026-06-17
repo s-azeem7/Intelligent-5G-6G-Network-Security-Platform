@@ -17,4 +17,7 @@ kubectl get pods -o wide
 # 5. Basic auth/log check
 kubectl logs deployment/amf-deployment | grep -i unauthorized || echo "No auth violations found"
 
+echo "===== Checking NetworkPolicies ====="
+kubectl get networkpolicy -n default
+
 echo "Zero Trust Validation Completed"
