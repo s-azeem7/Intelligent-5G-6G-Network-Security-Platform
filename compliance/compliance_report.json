@@ -1,7 +1,7 @@
 {
   "project": "5G/6G Security Platform",
   "checks": {
-    "3gpp": "passed",
+    "health-check": "passed",
     "etsi_nfv": "passed",
     "security": "passed",
     "zero_trust": "passed"
