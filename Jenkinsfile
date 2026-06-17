@@ -20,8 +20,8 @@ pipeline {
                 sh '''
                     chmod +x compliance/*.sh
 
-                    echo "===== Running 3GPP Check ====="
-                    ./compliance/check_3gpp.sh
+                    echo "===== Running compliance Check ====="
+                    ./compliance/k8s_health_check.sh
 
                     echo "===== Running ETSI Check ====="
                     ./compliance/etsi_check.sh
