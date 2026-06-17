@@ -2,6 +2,15 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Increase timeout to 10 minutes, add retries
-RUN pip install --default-timeout=600 --retries=5 \
-    flask requests prometheus_client pandas joblib scikit-learn
+RUN pip install --upgrade pip
+
+RUN pip install \
+    --default-timeout=1200 \
+    --retries=10 \
+    --no-cache-dir \
+    flask \
+    requests \
+    prometheus_client \
+    pandas \
+    joblib \
+    scikit-learn
