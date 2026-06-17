@@ -15,12 +15,22 @@ pipeline {
             }
         }
 
-        stage('Compliance Check (3GPP + ETSI + Security + Zero Trust)') {
+        // 🔐 NEW: Generate certificates before building images
+        stage('Generate Certificates') {
+            steps {
+                sh '''
+                    chmod +x gen_certs.sh
+                    ./gen_certs.sh
+                '''
+            }
+        }
+
+        stage('Compliance Check (Deployment Health)') {
             steps {
                 sh '''
                     chmod +x compliance/*.sh
 
-                    echo "===== Running compliance Check ====="
+                    echo "===== Running Kubernetes Health Check ====="
                     ./compliance/k8s_health_check.sh
 
                     echo "===== Running ETSI Check ====="
