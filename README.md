@@ -396,7 +396,7 @@ chmod +x compliance/check_3gpp.sh
 
 # 👨‍💻 Author
 
-**Syed Azeem**
+**Saad Azeem**
 
 Cybersecurity | DevSecOps | Cloud Security | 5G/6G Security Research
 
