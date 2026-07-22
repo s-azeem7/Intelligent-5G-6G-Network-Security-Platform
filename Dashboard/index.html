@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5G/6G Intelligent Security Platform — EduQual Level 6</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0e1a; font-family: 'Courier New', monospace; color: #e2e8f0; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    button { font-family: 'Courier New', monospace; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const THREAT_TYPES = {
+      GTP_TUNNEL_ATTACK: { label: "GTP Tunnel Attack",  color: "#ef4444" },
+      DDoS_5G_CORE:      { label: "DDoS 5G Core",       color: "#dc2626" },
+      SLICE_HOPPING:     { label: "Slice Hopping",      color: "#f97316" },
+      NAS_SPOOFING:      { label: "NAS Spoofing",       color: "#ef4444" },
+      IOT_BOTNET_C2:     { label: "IoT Botnet C2",      color: "#f59e0b" },
+      API_ABUSE_SBA:     { label: "SBA API Abuse",      color: "#3b82f6" },
+      S1AP_FLOODING:     { label: "NGAP Flooding",      color: "#dc2626" },
+      IMSI_CATCHERS:     { label: "IMSI Catcher",       color: "#8b5cf6" },
+    };
+
+    const SEV_COLOR = { CRITICAL:"#ef4444", HIGH:"#f97316", MEDIUM:"#f59e0b", LOW:"#22c55e" };
+
+    const SLICES_INIT = [
+      { id:"EMBB-01",       name:"eMBB",       status:"ACTIVE", ues:2847,  maxUes:10000,  security:"STANDARD",  enc:"128-NEA2", subnet:"172.21.0.0/24", violations:3, color:"#3b82f6" },
+      { id:"URLLC-01",      name:"URLLC",      status:"ACTIVE", ues:127,   maxUes:500,    security:"HIGH",      enc:"256-NEA3", subnet:"172.22.0.0/24", violations:1, color:"#8b5cf6" },
+      { id:"MIOT-01",       name:"MIoT",       status:"ACTIVE", ues:41203, maxUes:100000, security:"STANDARD",  enc:"128-NEA1", subnet:"172.25.0.0/24", violations:7, color:"#22c55e" },
+      { id:"ENTERPRISE-01", name:"Enterprise", status:"ACTIVE", ues:341,   maxUes:1000,   security:"CRITICAL",  enc:"256-ZUC",  subnet:"172.26.0.0/24", violations:0, color:"#f59e0b" },
+    ];
+
+    const ZT_NFS = [
+      { name:"AMF",  granted:1423, denied:12, score:94 },
+      { name:"SMF",  granted:892,  denied:5,  score:97 },
+      { name:"UDM",  granted:634,  denied:21, score:88 },
+      { name:"AUSF", granted:201,  denied:3,  score:96 },
+      { name:"PCF",  granted:445,  denied:8,  score:92 },
+      { name:"NEF",  granted:128,  denied:34, score:79 },
+    ];
+
+    const COMPLIANCE = [
+      { id:"5G-01", std:"3GPP", name:"5G-AKA Authentication",        score:95, status:"COMPLIANT" },
+      { id:"5G-02", std:"3GPP", name:"SUPI Concealment",             score:98, status:"COMPLIANT" },
+      { id:"5G-03", std:"3GPP", name:"Slice Security Policies",      score:88, status:"COMPLIANT" },
+      { id:"5G-06", std:"3GPP", name:"Transport Security (TLS 1.3)", score:72, status:"WARNING"   },
+      { id:"NS-01", std:"GSMA", name:"Slice Isolation",              score:92, status:"COMPLIANT" },
+      { id:"NS-02", std:"GSMA", name:"Cross-Slice Prevention",       score:96, status:"COMPLIANT" },
+      { id:"N-01",  std:"NIST", name:"Encryption Standards",         score:98, status:"COMPLIANT" },
+      { id:"G-02",  std:"GDPR", name:"Location Data Privacy",        score:90, status:"COMPLIANT" },
+    ];
+
+    const CICD_STAGES = [
+      { name:"Checkout",        logs:["Cloning repo: s-azeem7/Intelligent-5G-6G-Network-Security-Platform","Branch: main | Commit: b203897","Python 3.11 | Docker 24.0 | K3s v1.28"] },
+      { name:"SAST",            logs:["Running Bandit SAST scan on ai/ core/ compliance/...","0 HIGH severity issues found","pip-audit: 0 critical CVEs in requirements.txt","Secrets scan: CLEAN ✓"] },
+      { name:"Unit Tests",      logs:["pytest tests/ -v","test_slice_isolation ... PASSED","test_ai_detection ... PASSED","test_mtls_auth ... PASSED  —  3/3 passed ✓"] },
+      { name:"Build Images",    logs:["docker build -t 5g-security-platform . ✓","docker build -f Dockerfile.ai -t 5g-ai-engine . ✓","docker build -f Dockerfile.ausf -t 5g-ausf . ✓","All 5 images built successfully ✓"] },
+      { name:"Trivy Scan",      logs:["trivy image 5g-security-platform","CVEs: 0 CRITICAL, 2 HIGH (below threshold)","trivy image 5g-ai-engine","All images within security policy ✓"] },
+      { name:"3GPP Compliance", logs:["./compliance/check_3gpp.sh","Checking NF certificate presence... PASS","Checking slice policy enforcement... PASS","Compliance gate PASSED ✓"] },
+      { name:"Deploy K3s",      logs:["kubectl apply -f kubernetes/","amf-deployment.yaml applied ✓","ai-deployment.yaml applied ✓","kubectl rollout status: all pods RUNNING ✓"] },
+      { name:"Verify",          logs:["kubectl get pods -A  — all Running","Prometheus /metrics: UP ✓","AI engine /predict: responding ✓","Post-deploy verification: ALL HEALTHY ✓"] },
+    ];
+
+    function makeThreat() {
+      const types = Object.keys(THREAT_TYPES);
+      const type  = types[Math.floor(Math.random() * types.length)];
+      const sev   = type.includes("DDoS")||type.includes("GTP")||type.includes("NAS") ? "CRITICAL"
+                  : type.includes("SLICE")||type.includes("BOTNET") ? "HIGH" : "MEDIUM";
+      const o = () => Math.floor(Math.random()*254)+1;
+      return {
+        id: `ALT-${Date.now()}-${Math.random().toString(36).slice(2,5)}`,
+        ts: new Date().toISOString(), type, sev,
+        conf: +(0.78 + Math.random()*0.21).toFixed(2),
+        src: `${[10,172,192][Math.floor(Math.random()*3)]}.${o()}.${o()}.${o()}`,
+        tgt: ["AMF:N2","SMF:N4","GTP-U:2152","NRF:SBA","URLLC Slice"][Math.floor(Math.random()*5)],
+        mit: Math.random() > 0.4,
+      };
+    }
+
+    const TABS = ["overview","threats","slices","zerotrust","compliance","cicd"];
+    const TAB_LABEL = { overview:"Overview", threats:"Threat Detection", slices:"Network Slices",
+                        zerotrust:"Zero Trust", compliance:"Compliance", cicd:"DevSecOps CI/CD" };
+
+    /* ─────────────────── MAIN APP ─────────────────── */
+    function App() {
+      const [tab,       setTab]       = useState("overview");
+      const [alerts,    setAlerts]    = useState([]);
+      const [stats,     setStats]     = useState({ total:0, mit:0, crit:0 });
+      const [live,      setLive]      = useState(true);
+      const [slices,    setSlices]    = useState(SLICES_INIT);
+      const [isolated,  setIsolated]  = useState(null);
+      const [running,   setRunning]   = useState(false);
+      const [stageIdx,  setStageIdx]  = useState(-1);
+      const [log,       setLog]       = useState([]);
+      const tmr = useRef(null);
+
+      /* live threat feed */
+      useEffect(() => {
+        if (!live) return;
+        tmr.current = setInterval(() => {
+          const t = makeThreat();
+          setAlerts(p => [t,...p].slice(0,60));
+          setStats(p => ({ total:p.total+1, mit:p.mit+(t.mit?1:0), crit:p.crit+(t.sev==="CRITICAL"?1:0) }));
+          if (Math.random()>.7)
+            setSlices(p => p.map(s=>({...s,
+              ues: Math.max(0, s.ues + Math.floor((Math.random()-.5)*60)),
+              violations: s.status==="ISOLATED" ? s.violations : s.violations+(Math.random()>.92?1:0)
+            })));
+        }, 2500);
+        return () => clearInterval(tmr.current);
+      }, [live]);
+
+      /* slice isolate */
+      const isolate = id => {
+        setIsolated(id);
+        setSlices(p => p.map(s => s.id===id ? {...s,status:"ISOLATED"} : s));
+        setTimeout(() => {
+          setSlices(p => p.map(s => s.id===id ? {...s,status:"ACTIVE"} : s));
+          setIsolated(null);
+        }, 8000);
+      };
+
+      /* ci/cd */
+      const runPipeline = () => {
+        if (running) return;
+        setRunning(true); setStageIdx(0); setLog([]);
+        let si = 0;
+        const next = () => {
+          if (si >= CICD_STAGES.length) { setRunning(false); return; }
+          const stage = CICD_STAGES[si];
+          setStageIdx(si);
+          let li = 0;
+          const iv = setInterval(() => {
+            if (li < stage.logs.length) {
+              setLog(p => [...p, `[${stage.name}] ${stage.logs[li++]}`]);
+            } else {
+              clearInterval(iv); si++; setTimeout(next, 300);
+            }
+          }, 500);
+        };
+        next();
+      };
+
+      const compScore = Math.round(COMPLIANCE.reduce((a,c)=>a+c.score,0)/COMPLIANCE.length);
+      const mitRate   = stats.total > 0 ? Math.round(stats.mit/stats.total*100) : 0;
+
+      /* ── shared styles ── */
+      const card  = { background:"#0f172a", border:"1px solid #1e3a5f", borderRadius:8, padding:16 };
+      const label = { fontSize:10, color:"#64748b", letterSpacing:1.5, marginBottom:4 };
+      const sec   = { fontSize:11, color:"#60a5fa", letterSpacing:2, marginBottom:12 };
+
+      return (
+        <div style={{minHeight:"100vh",background:"#0a0e1a",color:"#e2e8f0",fontSize:13}}>
+
+          {/* ── HEADER ── */}
+          <div style={{background:"linear-gradient(135deg,#0f172a,#1e1b4b)",borderBottom:"1px solid #1e3a5f",
+                       padding:"12px 24px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <div style={{display:"flex",alignItems:"center",gap:12}}>
+              <div style={{width:38,height:38,borderRadius:8,background:"linear-gradient(135deg,#3b82f6,#8b5cf6)",
+                           display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>🛡</div>
+              <div>
+                <div style={{fontSize:15,fontWeight:700,letterSpacing:1}}>5G/6G INTELLIGENT SECURITY PLATFORM</div>
+                <div style={{fontSize:10,color:"#64748b",letterSpacing:2}}>
+                  EDUQUAL LEVEL 6 · TOPIC 123 · github.com/s-azeem7/Intelligent-5G-6G-Network-Security-Platform
+                </div>
+              </div>
+            </div>
+            <div style={{display:"flex",alignItems:"center",gap:16}}>
+              <div style={{display:"flex",alignItems:"center",gap:6}}>
+                <div style={{width:8,height:8,borderRadius:"50%",
+                             background:live?"#22c55e":"#6b7280",
+                             boxShadow:live?"0 0 8px #22c55e":"none"}}/>
+                <span style={{fontSize:11,color:live?"#22c55e":"#6b7280"}}>{live?"LIVE MONITORING":"PAUSED"}</span>
+              </div>
+              <button onClick={()=>setLive(v=>!v)}
+                style={{padding:"4px 12px",borderRadius:4,border:"1px solid #334155",
+                        background:"#1e293b",color:"#94a3b8",cursor:"pointer",fontSize:11}}>
+                {live?"⏸ Pause":"▶ Resume"}
+              </button>
+              <span style={{fontSize:11,color:"#475569"}}>{new Date().toLocaleTimeString()}</span>
+            </div>
+          </div>
+
+          {/* ── TABS ── */}
+          <div style={{background:"#0f172a",borderBottom:"1px solid #1e3a5f",padding:"0 24px",display:"flex"}}>
+            {TABS.map(t=>(
+              <button key={t} onClick={()=>setTab(t)} style={{
+                padding:"10px 18px",border:"none",background:"transparent",cursor:"pointer",fontSize:12,
+                color: tab===t?"#60a5fa":"#475569",
+                borderBottom: tab===t?"2px solid #60a5fa":"2px solid transparent",
+                transition:"all .15s"
+              }}>{TAB_LABEL[t].toUpperCase()}</button>
+            ))}
+          </div>
+
+          <div style={{padding:"20px 24px",maxWidth:1400,margin:"0 auto"}}>
+
+            {/* ══ OVERVIEW ══ */}
+            {tab==="overview" && (<div>
+              {/* KPIs */}
+              <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:12,marginBottom:20}}>
+                {[
+                  {l:"THREATS DETECTED", v:stats.total,       sub:"This session",            c:"#ef4444"},
+                  {l:"AUTO-MITIGATED",   v:stats.mit,         sub:`${mitRate}% rate`,        c:"#22c55e"},
+                  {l:"CRITICAL ALERTS",  v:stats.crit,        sub:"Severity CRITICAL",       c:"#ef4444"},
+                  {l:"COMPLIANCE SCORE", v:`${compScore}%`,   sub:"3GPP/GSMA/NIST/GDPR",    c:"#f59e0b"},
+                  {l:"ACTIVE SLICES",    v:`${slices.filter(s=>s.status==="ACTIVE").length}/4`, sub:"All healthy", c:"#3b82f6"},
+                ].map(k=>(
+                  <div key={k.l} style={card}>
+                    <div style={label}>{k.l}</div>
+                    <div style={{fontSize:30,fontWeight:700,color:k.c,fontFamily:"monospace"}}>{k.v}</div>
+                    <div style={{fontSize:10,color:"#475569",marginTop:4}}>{k.sub}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{display:"grid",gridTemplateColumns:"3fr 2fr",gap:12}}>
+                {/* architecture */}
+                <div style={card}>
+                  <div style={sec}>PLATFORM ARCHITECTURE — github.com/s-azeem7</div>
+                  {[
+                    {l:"AI Threat Detection",   t:"IsolationForest · scikit-learn · threat_model.pkl",    c:"#ef4444"},
+                    {l:"5G Core NFs",           t:"AMF · SMF · NRF · AUSF — Python Flask microservices",   c:"#8b5cf6"},
+                    {l:"Network Slice Security",t:"Slice allowlist · AI anomaly layer · 3GPP TS 33.501",   c:"#3b82f6"},
+                    {l:"Zero Trust (mTLS)",     t:"gen_certs.sh · mutual TLS · X.509 per NF",              c:"#06b6d4"},
+                    {l:"K8s Namespace Isolation",t:"K3s · NetworkPolicy · tenant namespaces",              c:"#22c55e"},
+                    {l:"DevSecOps CI/CD",       t:"Jenkins · Bandit · Trivy · 3GPP compliance gate",       c:"#f59e0b"},
+                  ].map(r=>(
+                    <div key={r.l} style={{display:"flex",alignItems:"center",gap:12,
+                                          padding:"8px 0",borderBottom:"1px solid #1e293b"}}>
+                      <div style={{width:7,height:7,borderRadius:"50%",background:r.c,flexShrink:0}}/>
+                      <div style={{flex:1}}>
+                        <div style={{fontSize:12,color:"#cbd5e1",fontWeight:600}}>{r.l}</div>
+                        <div style={{fontSize:10,color:"#475569",marginTop:2}}>{r.t}</div>
+                      </div>
+                      <div style={{fontSize:11,color:"#22c55e",fontFamily:"monospace"}}>ACTIVE</div>
+                    </div>
+                  ))}
+                </div>
+                {/* live feed */}
+                <div style={card}>
+                  <div style={{...sec,display:"flex",justifyContent:"space-between"}}>
+                    <span>LIVE ALERT FEED</span>
+                    <span style={{color:"#22c55e"}}>{alerts.length} events</span>
+                  </div>
+                  <div style={{maxHeight:340,overflowY:"auto"}}>
+                    {alerts.slice(0,14).map(a=>(
+                      <div key={a.id} style={{padding:"5px 0",borderBottom:"1px solid #1e293b"}}>
+                        <div style={{display:"flex",justifyContent:"space-between"}}>
+                          <span style={{fontSize:10,color:SEV_COLOR[a.sev],fontWeight:700}}>{a.sev}</span>
+                          <span style={{fontSize:9,color:"#475569"}}>{new Date(a.ts).toLocaleTimeString()}</span>
+                        </div>
+                        <div style={{fontSize:11,color:"#cbd5e1",marginTop:2}}>{THREAT_TYPES[a.type]?.label}</div>
+                        <div style={{fontSize:9,color:"#475569"}}>{a.src} → {a.tgt} · {a.mit?"✓ MITIGATED":"⚠ ALERTING"}</div>
+                      </div>
+                    ))}
+                    {!alerts.length && <div style={{color:"#475569",padding:20,textAlign:"center"}}>Waiting for threats...</div>}
+                  </div>
+                </div>
+              </div>
+            </div>)}
+
+            {/* ══ THREATS ══ */}
+            {tab==="threats" && (<div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:20}}>
+                {Object.entries(THREAT_TYPES).map(([k,v])=>{
+                  const cnt = alerts.filter(a=>a.type===k).length;
+                  return (
+                    <div key={k} style={{...card,border:`1px solid ${v.color}33`}}>
+                      <div style={{fontSize:10,color:v.color,letterSpacing:1}}>{v.label.toUpperCase()}</div>
+                      <div style={{fontSize:34,fontWeight:700,color:v.color,fontFamily:"monospace"}}>{cnt}</div>
+                      <div style={{fontSize:9,color:"#475569",marginTop:4}}>events detected</div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div style={card}>
+                <div style={sec}>ML MODEL — IsolationForest (threat_model.pkl) · scikit-learn</div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12,marginBottom:16}}>
+                  {[
+                    {l:"MODEL FILE",       v:"threat_model.pkl",               s:"Trained via ai/train_model.py"},
+                    {l:"INPUT FEATURES",   v:"RPM + failed_auth",              s:"requests_per_minute, failed_auth_count"},
+                    {l:"THREAT THRESHOLD", v:"pred[0] == -1",                  s:"IsolationForest anomaly flag"},
+                  ].map(m=>(
+                    <div key={m.l} style={{background:"#0d1525",borderRadius:6,padding:12}}>
+                      <div style={{fontSize:10,color:"#64748b"}}>{m.l}</div>
+                      <div style={{color:"#60a5fa",fontSize:12,marginTop:4,fontFamily:"monospace"}}>{m.v}</div>
+                      <div style={{color:"#475569",fontSize:10,marginTop:4}}>{m.s}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={sec}>RECENT THREAT DETAILS</div>
+                <div style={{fontFamily:"monospace",fontSize:11}}>
+                  <div style={{display:"grid",gridTemplateColumns:"100px 90px 70px 150px 130px 80px 1fr",
+                               gap:8,padding:"4px 0",fontSize:9,color:"#475569",borderBottom:"1px solid #1e293b"}}>
+                    <span>TIME</span><span>SEVERITY</span><span>CONF</span><span>TYPE</span>
+                    <span>SOURCE IP</span><span>TARGET</span><span>STATUS</span>
+                  </div>
+                  {alerts.slice(0,12).map(a=>(
+                    <div key={a.id} style={{display:"grid",gridTemplateColumns:"100px 90px 70px 150px 130px 80px 1fr",
+                                           gap:8,padding:"5px 0",borderBottom:"1px solid #1e293b",alignItems:"center"}}>
+                      <span style={{color:"#475569",fontSize:9}}>{new Date(a.ts).toLocaleTimeString()}</span>
+                      <span style={{color:SEV_COLOR[a.sev],fontSize:10,fontWeight:700}}>{a.sev}</span>
+                      <span style={{color:"#94a3b8",fontSize:10}}>{(a.conf*100).toFixed(0)}%</span>
+                      <span style={{color:"#e2e8f0",fontSize:10}}>{THREAT_TYPES[a.type]?.label}</span>
+                      <span style={{color:"#64748b",fontSize:9}}>{a.src}</span>
+                      <span style={{color:"#64748b",fontSize:9}}>{a.tgt}</span>
+                      <span style={{color:a.mit?"#22c55e":"#f59e0b",fontSize:9}}>{a.mit?"✓ MITIGATED":"⚠ ALERTING"}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>)}
+
+            {/* ══ SLICES ══ */}
+            {tab==="slices" && (<div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:16}}>
+                {slices.map(s=>(
+                  <div key={s.id} style={{...card,
+                    border:`1px solid ${s.status==="ISOLATED"?"#ef4444":s.color+"44"}`,
+                    position:"relative"}}>
+                    {s.status==="ISOLATED" && (
+                      <div style={{position:"absolute",top:8,right:8,background:"#ef4444",
+                                   color:"#fff",fontSize:9,padding:"2px 8px",borderRadius:4,fontWeight:700}}>
+                        ISOLATED
+                      </div>
+                    )}
+                    <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
+                      <div style={{width:10,height:10,borderRadius:"50%",
+                                   background:s.status==="ISOLATED"?"#ef4444":s.color}}/>
+                      <div>
+                        <div style={{fontSize:14,fontWeight:700}}>{s.id} — {s.name}</div>
+                        <div style={{fontSize:10,color:"#475569"}}>S-NSSAI · {s.subnet}</div>
+                      </div>
+                    </div>
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:12}}>
+                      {[
+                        ["ACTIVE UEs",     `${s.ues.toLocaleString()} / ${s.maxUes.toLocaleString()}`, s.color],
+                        ["SECURITY LEVEL", s.security, s.security==="CRITICAL"?"#ef4444":s.security==="HIGH"?"#f97316":"#22c55e"],
+                        ["ENCRYPTION",     s.enc,      "#60a5fa"],
+                        ["VIOLATIONS",     s.violations, s.violations>0?"#f97316":"#22c55e"],
+                      ].map(([k,v,c])=>(
+                        <div key={k} style={{background:"#0d1525",borderRadius:6,padding:10}}>
+                          <div style={{fontSize:9,color:"#64748b",letterSpacing:1}}>{k}</div>
+                          <div style={{fontSize:14,color:c,fontWeight:700,marginTop:2}}>{v}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{marginBottom:12}}>
+                      <div style={{display:"flex",justifyContent:"space-between",fontSize:9,color:"#475569",marginBottom:4}}>
+                        <span>UE UTILISATION</span>
+                        <span>{Math.round(s.ues/s.maxUes*100)}%</span>
+                      </div>
+                      <div style={{height:4,borderRadius:2,background:"#1e293b"}}>
+                        <div style={{height:"100%",borderRadius:2,background:s.color,
+                                     width:`${Math.min(100,s.ues/s.maxUes*100)}%`,transition:"width .5s"}}/>
+                      </div>
+                    </div>
+                    <div style={{display:"flex",gap:8}}>
+                      <button onClick={()=>s.status!=="ISOLATED"&&isolate(s.id)}
+                        style={{padding:"6px 14px",borderRadius:4,border:"1px solid #ef4444",
+                                background:"transparent",color:"#ef4444",fontSize:10,
+                                cursor:s.status==="ISOLATED"?"default":"pointer",
+                                opacity:s.status==="ISOLATED"?0.5:1}}>
+                        {s.status==="ISOLATED"?"Restoring...":"🔒 ISOLATE SLICE"}
+                      </button>
+                      <div style={{padding:"6px 14px",borderRadius:4,border:`1px solid ${s.color}44`,
+                                   color:s.color,fontSize:10}}>
+                        ISOLATION: {s.status==="ISOLATED"?"ACTIVE":
+                          ["FULL","NETWORK","LOGICAL","DEDICATED"][SLICES_INIT.findIndex(x=>x.id===s.id)]}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {isolated && (
+                <div style={{marginTop:16,background:"#1a0a0a",border:"1px solid #ef4444",
+                             borderRadius:8,padding:12}}>
+                  <div style={{color:"#ef4444",fontSize:12,fontWeight:700}}>
+                    🚨 EMERGENCY ISOLATION ACTIVE — {isolated}
+                  </div>
+                  <div style={{color:"#94a3b8",fontSize:11,marginTop:4}}>
+                    All traffic blocked. Cross-slice hopping prevented. Auto-restoring in 8s...
+                  </div>
+                </div>
+              )}
+            </div>)}
+
+            {/* ══ ZERO TRUST ══ */}
+            {tab==="zerotrust" && (<div>
+              <div style={{...card,marginBottom:12}}>
+                <div style={sec}>ZERO TRUST PRINCIPLES — NIST SP 800-207 + 3GPP TS 33.501 + mTLS (gen_certs.sh)</div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12}}>
+                  {[
+                    {p:"Never Trust, Always Verify", d:"Every NF-to-NF request authenticated before service access — no implicit network trust", i:"🔐"},
+                    {p:"Least Privilege Access",     d:"Short-lived tokens per service scope. Each NF cert scoped to its own function only", i:"🎯"},
+                    {p:"Assume Breach",              d:"Continuous anomaly scoring. High RPM or failed_auth triggers revocation", i:"🛡"},
+                    {p:"Micro-Segmentation",         d:"K8s NetworkPolicy: default-deny-all per namespace. Explicit allow only for required NF pairs", i:"🔲"},
+                    {p:"mTLS Everywhere",            d:"gen_certs.sh creates CA + per-NF certs. Both sides present X.509 on every connection", i:"🔑"},
+                    {p:"Continuous Verification",    d:"AI engine re-evaluates every request. Anomalous NF behaviour triggers immediate block", i:"📊"},
+                  ].map(p=>(
+                    <div key={p.p} style={{background:"#0d1525",borderRadius:6,padding:12}}>
+                      <div style={{fontSize:18,marginBottom:6}}>{p.i}</div>
+                      <div style={{fontSize:11,color:"#60a5fa",fontWeight:700,marginBottom:4}}>{p.p}</div>
+                      <div style={{fontSize:10,color:"#64748b",lineHeight:1.5}}>{p.d}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div style={card}>
+                <div style={sec}>5G NF TRUST SCORES — SERVICE-BASED ARCHITECTURE</div>
+                <div style={{display:"grid",gridTemplateColumns:"80px 80px 80px 1fr 110px",
+                             gap:12,padding:"4px 0",fontSize:9,color:"#475569",marginBottom:4}}>
+                  <span>NF</span><span>GRANTED</span><span>DENIED</span><span>TRUST BAR</span><span>SCORE</span>
+                </div>
+                {ZT_NFS.map(nf=>(
+                  <div key={nf.name} style={{display:"grid",gridTemplateColumns:"80px 80px 80px 1fr 110px",
+                                             gap:12,alignItems:"center",padding:"8px 0",
+                                             borderBottom:"1px solid #1e293b"}}>
+                    <span style={{fontWeight:700}}>{nf.name}</span>
+                    <span style={{color:"#22c55e",fontSize:11}}>✓ {nf.granted.toLocaleString()}</span>
+                    <span style={{color:"#ef4444",fontSize:11}}>✗ {nf.denied}</span>
+                    <div style={{height:6,borderRadius:3,background:"#1e293b"}}>
+                      <div style={{height:"100%",borderRadius:3,width:`${nf.score}%`,
+                                   background:nf.score>85?"#22c55e":nf.score>60?"#f59e0b":"#ef4444"}}/>
+                    </div>
+                    <span style={{color:nf.score>85?"#22c55e":"#f59e0b",fontFamily:"monospace"}}>
+                      TRUST: {nf.score}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>)}
+
+            {/* ══ COMPLIANCE ══ */}
+            {tab==="compliance" && (<div>
+              <div style={{display:"flex",gap:12,marginBottom:20}}>
+                {[
+                  {std:"3GPP TS 33.501", score:88, n:4},
+                  {std:"GSMA FS.32",     score:94, n:2},
+                  {std:"NIST SP800-187", score:98, n:1},
+                  {std:"GDPR Telecom",   score:90, n:1},
+                ].map(s=>(
+                  <div key={s.std} style={{flex:1,...card}}>
+                    <div style={{fontSize:10,color:"#64748b",marginBottom:4}}>{s.std}</div>
+                    <div style={{fontSize:30,fontWeight:700,fontFamily:"monospace",
+                                 color:s.score>90?"#22c55e":s.score>75?"#f59e0b":"#ef4444"}}>{s.score}%</div>
+                    <div style={{fontSize:10,color:"#475569"}}>{s.n} controls</div>
+                    <div style={{height:4,borderRadius:2,background:"#1e293b",marginTop:8}}>
+                      <div style={{height:"100%",width:`${s.score}%`,borderRadius:2,
+                                   background:s.score>90?"#22c55e":"#f59e0b"}}/>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div style={card}>
+                <div style={sec}>AUTOMATED COMPLIANCE CONTROLS — check_3gpp.sh + zero_trust_check.sh</div>
+                <div style={{display:"grid",gridTemplateColumns:"65px 70px 1fr 55px 120px",
+                             gap:8,fontSize:9,color:"#475569",marginBottom:8}}>
+                  <span>CTRL</span><span>STD</span><span>DESCRIPTION</span><span>SCORE</span><span>STATUS</span>
+                </div>
+                {COMPLIANCE.map(c=>(
+                  <div key={c.id} style={{display:"grid",gridTemplateColumns:"65px 70px 1fr 55px 120px",
+                                          gap:8,padding:"7px 0",borderBottom:"1px solid #1e293b",alignItems:"center"}}>
+                    <span style={{color:"#60a5fa",fontSize:11,fontWeight:700}}>{c.id}</span>
+                    <span style={{fontSize:10,color:"#64748b"}}>{c.std}</span>
+                    <span style={{fontSize:11,color:"#cbd5e1"}}>{c.name}</span>
+                    <span style={{fontSize:12,color:c.score>85?"#22c55e":"#f59e0b",fontFamily:"monospace"}}>{c.score}%</span>
+                    <span style={{fontSize:9,fontWeight:700,padding:"2px 8px",borderRadius:3,
+                                  color:c.status==="COMPLIANT"?"#22c55e":"#f59e0b",
+                                  background:c.status==="COMPLIANT"?"#052e16":"#451a03"}}>{c.status}</span>
+                  </div>
+                ))}
+                <div style={{marginTop:12,padding:"8px 12px",background:"#0d1525",borderRadius:6,
+                             display:"flex",justifyContent:"space-between"}}>
+                  <span style={{fontSize:11,color:"#64748b"}}>Overall Platform Score</span>
+                  <span style={{fontSize:14,fontWeight:700,color:"#22c55e",fontFamily:"monospace"}}>
+                    {compScore}/100 — AUTO-ASSESSED ✓
+                  </span>
+                </div>
+              </div>
+            </div>)}
+
+            {/* ══ CI/CD ══ */}
+            {tab==="cicd" && (<div>
+              <div style={{...card,marginBottom:12}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+                  <div style={sec}>JENKINS PIPELINE — Jenkinsfile · github.com/s-azeem7</div>
+                  <button onClick={runPipeline} disabled={running}
+                    style={{padding:"7px 20px",borderRadius:4,fontSize:11,cursor:running?"default":"pointer",
+                            border:"1px solid #22c55e",
+                            background:running?"#0d1525":"#052e16",
+                            color:running?"#475569":"#22c55e"}}>
+                    {running?"⚙ PIPELINE RUNNING...":"▶ RUN PIPELINE"}
+                  </button>
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(8,1fr)",gap:4}}>
+                  {CICD_STAGES.map((s,i)=>(
+                    <div key={s.name} style={{padding:"8px 4px",borderRadius:4,textAlign:"center",
+                      background:stageIdx>i?"#052e16":stageIdx===i?"#0c1a2e":"#0d1525",
+                      border:`1px solid ${stageIdx>i?"#22c55e":stageIdx===i?"#3b82f6":"#1e293b"}`,
+                      transition:"all .3s"}}>
+                      <div style={{fontSize:14,marginBottom:4}}>
+                        {stageIdx>i?"✅":stageIdx===i?"⚙":"○"}
+                      </div>
+                      <div style={{fontSize:9,lineHeight:1.3,
+                                   color:stageIdx>i?"#22c55e":stageIdx===i?"#60a5fa":"#475569"}}>{s.name}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div style={card}>
+                <div style={sec}>PIPELINE LOG</div>
+                <div style={{background:"#0a0e14",borderRadius:4,padding:12,
+                             minHeight:200,maxHeight:280,overflowY:"auto",fontFamily:"monospace",fontSize:11}}>
+                  {!log.length
+                    ? <span style={{color:"#475569"}}>$ Click "RUN PIPELINE" to simulate the Jenkins CI/CD run...</span>
+                    : log.map((l,i)=>(
+                        <div key={i} style={{marginBottom:3,
+                          color:l.includes("✓")?"#22c55e":l.includes("FAIL")||l.includes("ERROR")?"#ef4444":"#94a3b8"}}>
+                          <span style={{color:"#475569"}}>[{new Date().toLocaleTimeString()}] </span>{l}
+                        </div>
+                      ))
+                  }
+                  {!running && log.length>0 && (
+                    <div style={{color:"#22c55e",marginTop:8,fontWeight:700}}>
+                      ✅ Pipeline PASSED — All 8 stages green — Deployed to K3s ✓
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div style={{...card,marginTop:12}}>
+                <div style={sec}>SECURITY GATES — embedded in Jenkinsfile</div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12}}>
+                  {[
+                    {g:"Bandit SAST",       d:"Python static analysis — blocks HIGH+ severity code vulnerabilities", t:"bandit"},
+                    {g:"pip-audit CVE",     d:"Dependency scan — blocks CRITICAL CVEs in requirements.txt",         t:"pip-audit"},
+                    {g:"Trivy Image Scan",  d:"Docker image CVE scan — blocks CRITICAL findings pre-deploy",        t:"trivy"},
+                    {g:"3GPP Compliance",   d:"check_3gpp.sh validates NF certs, slice policy, encryption config",  t:"shell script"},
+                    {g:"K3s Deploy Verify", d:"kubectl rollout status — confirms all pods Running before marking pass", t:"kubectl"},
+                    {g:"Prometheus Check",  d:"Verifies /metrics endpoint responding after deployment",             t:"curl"},
+                  ].map(g=>(
+                    <div key={g.g} style={{background:"#0d1525",borderRadius:6,padding:12}}>
+                      <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+                        <span style={{fontSize:11,fontWeight:700}}>{g.g}</span>
+                        <span style={{fontSize:10,color:"#22c55e"}}>✓ PASS</span>
+                      </div>
+                      <div style={{fontSize:10,color:"#64748b",lineHeight:1.5,marginBottom:6}}>{g.d}</div>
+                      <div style={{fontSize:9,color:"#3b82f6",background:"#0a1628",
+                                   padding:"2px 8px",borderRadius:3,display:"inline-block"}}>{g.t}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>)}
+
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
