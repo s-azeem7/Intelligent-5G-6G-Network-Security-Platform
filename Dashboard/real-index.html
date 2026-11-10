@@ -27,82 +27,141 @@
     padding-bottom: 40px;
   }
   .wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
-  header { border-bottom: 1px solid var(--line); background: var(--panel-2); }
+
+  /* ── HEADER (Cyber Security Look) ── */
+  header { 
+    border-bottom: 1px solid var(--line); 
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); 
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+  }
   .head { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; padding: 14px 0; }
-  h1 { font-size: 18px; margin: 0; letter-spacing: .2px; }
+  h1 { 
+    font-size: 20px; 
+    margin: 0; 
+    letter-spacing: .5px; 
+    font-weight: 800;
+    background: -webkit-linear-gradient(45deg, var(--cyan), var(--violet));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
   .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
   .status { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; background: var(--panel); }
   .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
-  .status.ok .dot { background: var(--green); }
-  .status.bad .dot { background: var(--red); }
-  .status.sample .dot { background: var(--amber); }
+  .status.ok .dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .status.bad .dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
+  .status.sample .dot { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+  
   .settings { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 0 0 14px; }
   .settings label { color: var(--muted); font-size: 12px; }
   input[type=text] { background: var(--bg); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 6px 10px; font: inherit; min-width: 230px; }
-  button { background: var(--panel); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 6px 12px; font: inherit; cursor: pointer; }
-  button:hover { border-color: var(--cyan); }
+  button { background: var(--panel); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 6px 12px; font: inherit; cursor: pointer; transition: all 0.2s; }
+  button:hover { border-color: var(--cyan); background: #1a2438; }
   button:focus-visible, input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  
   #banner { display: none; background: #3b2a05; color: #fde68a; border-bottom: 1px solid #7c5a10; text-align: center; padding: 8px 16px; font-weight: 600; }
   #banner.show { display: block; }
+  
   nav { display: flex; gap: 4px; flex-wrap: wrap; padding: 12px 0 0; }
-  nav button { border-radius: 8px 8px 0 0; border-bottom: none; color: var(--muted); }
-  nav button[aria-selected=true] { color: var(--text); background: var(--panel); border-color: var(--cyan); }
+  nav button { border-radius: 8px 8px 0 0; border-bottom: none; color: var(--muted); background: var(--panel-2); }
+  nav button[aria-selected=true] { color: var(--cyan); background: var(--panel); border-color: var(--cyan); border-bottom: 2px solid var(--cyan); }
+  
   main { padding-top: 16px; }
   section.tab { display: none; }
   section.tab.active { display: block; }
   .grid { display: grid; gap: 12px; }
   .kpis { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
   .two { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; min-width: 0; }
+  
+  /* ── CARDS ── */
+  .card { 
+    background: var(--panel); 
+    border: 1px solid var(--line); 
+    border-left: 3px solid var(--cyan); 
+    border-radius: var(--radius); 
+    padding: 14px 16px; 
+    min-width: 0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+  }
   .card h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin: 0 0 10px; font-weight: 600; }
   .kpi .label { color: var(--muted); font-size: 12px; }
   .kpi .value { font-size: 30px; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums; }
   .kpi .hint { color: var(--muted); font-size: 11px; margin-top: 2px; }
   .c-cyan { color: var(--cyan); } .c-green { color: var(--green); } .c-amber { color: var(--amber); } .c-red { color: var(--red); } .c-violet { color: var(--violet); }
+  
   .tag { text-transform: none; letter-spacing: 0; display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); vertical-align: middle; margin-left: 6px; }
   .tag.cfg { border-color: #3b4a66; }
-  .tag.live { border-color: #1f6b52; color: var(--green); }
+  .tag.live { border-color: #1f6b52; color: var(--green); background: #0f3a2c; }
+  
   .pill { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; }
-  .pill.up { background: #0f3a2c; color: var(--green); }
-  .pill.down { background: #471717; color: var(--red); }
-  .pill.unknown { background: #232c3d; color: var(--muted); }
-  .pill.built { background: #0f3a2c; color: var(--green); }
-  .pill.partial { background: #3b2a05; color: var(--amber); }
-  .pill.target { background: #232c3d; color: var(--muted); }
+  .pill.up { background: #0f3a2c; color: var(--green); border: 1px solid #1f6b52; }
+  .pill.down { background: #471717; color: var(--red); border: 1px solid #7a2a2a; }
+  .pill.unknown { background: #232c3d; color: var(--muted); border: 1px dashed #475569; }
+  .pill.built { background: #0f3a2c; color: var(--green); border: 1px solid #1f6b52; }
+  .pill.partial { background: #3b2a05; color: var(--amber); border: 1px solid #7c5a10; }
+  .pill.target { background: #232c3d; color: var(--muted); border: 1px dashed #475569; }
+  
   .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
   .legend i { display: inline-block; width: 18px; height: 3px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
   .chartbox { position: relative; }
   svg { display: block; width: 100%; height: auto; }
   svg text { fill: var(--muted); font-size: 11px; font-family: inherit; }
-  #tip { position: absolute; pointer-events: none; background: #0b0f17; border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; font-size: 12px; display: none; white-space: nowrap; z-index: 2; }
+  #tip { position: absolute; pointer-events: none; background: #0b0f17; border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; font-size: 12px; display: none; white-space: nowrap; z-index: 2; box-shadow: 0 4px 12px rgba(0,0,0,0.8); }
   .empty { color: var(--muted); text-align: center; padding: 40px 10px; }
-  ul.feed { list-style: none; margin: 0; padding: 0; max-height: 330px; overflow: auto; }
-  ul.feed li { display: grid; grid-template-columns: 64px 12px 1fr; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+  
+  /* ── TERMINAL STYLE FEED ── */
+  ul.feed { 
+    list-style: none; margin: 0; padding: 10px; 
+    max-height: 330px; overflow: auto; 
+    background: #05080f; 
+    border: 1px solid #1e293b; 
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+  }
+  ul.feed li { 
+    display: grid; 
+    grid-template-columns: 64px 12px 1fr; 
+    gap: 8px; 
+    padding: 8px 0; 
+    border-bottom: 1px dashed #1e293b; 
+    align-items: baseline; 
+  }
   ul.feed li:last-child { border-bottom: none; }
   ul.feed time { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 12px; }
   ul.feed .lv { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
-  .lv.ok { background: var(--green); } .lv.warn { background: var(--amber); } .lv.bad { background: var(--red); } .lv.info { background: var(--cyan); }
+  .lv.ok { background: var(--green); box-shadow: 0 0 6px var(--green); } 
+  .lv.warn { background: var(--amber); box-shadow: 0 0 6px var(--amber); } 
+  .lv.bad { background: var(--red); box-shadow: 0 0 6px var(--red); } 
+  .lv.info { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+  
   table { border-collapse: collapse; width: 100%; }
   th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
   th { color: var(--muted); font-weight: 600; font-size: 12px; }
   td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; }
+  
   .nf { display: grid; gap: 8px; }
   .nf .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-  .nf .name { font-size: 18px; font-weight: 700; }
+  .nf .name { font-size: 18px; font-weight: 700; color: var(--cyan); }
   .nf .role { color: var(--muted); font-size: 12px; }
   .nf dl { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 13px; }
-  .nf dt { color: var(--muted); } .nf dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+  .nf dt { color: var(--muted); } .nf dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip { padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line); font-weight: 600; }
-  .chip.allow { border-color: #1f6b52; color: var(--green); }
-  .chip.deny { border-color: #7a2a2a; color: var(--red); }
+  .chip.allow { border-color: #1f6b52; color: var(--green); background: #0f3a2c; }
+  .chip.deny { border-color: #7a2a2a; color: var(--red); background: #471717; }
+  
   ol.steps { margin: 0; padding-left: 20px; } ol.steps li { margin: 4px 0; }
   .note { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
   .help { border-left: 3px solid var(--amber); background: #261d08; padding: 10px 14px; border-radius: 0 8px 8px 0; margin-bottom: 12px; display: none; }
   .help.show { display: block; }
   .help pre { margin: 6px 0 0; white-space: pre-wrap; }
-  footer { color: var(--muted); font-size: 12px; margin-top: 18px; }
+  footer { color: var(--muted); font-size: 12px; margin-top: 18px; border-top: 1px solid var(--line); padding-top: 12px; }
   @media (max-width: 560px) { .kpi .value { font-size: 26px; } input[type=text] { min-width: 100%; } }
 </style>
 </head>
@@ -352,354 +411,4 @@
   const SERIES = [
     { key: 'req',     color: 'var(--cyan)',  label: 'Requests/min',   expr: 'sum(rate(amf_requests_total[1m]))*60' },
     { key: 'blocked', color: 'var(--amber)', label: 'Blocked/min',    expr: 'sum(rate(amf_blocked_total[1m]))*60' },
-    { key: 'threat',  color: 'var(--red)',   label: 'AI threats/min', expr: 'sum(rate(amf_threats_total[1m]))*60' }
-  ];
-  const NFS = [
-    { id: 'amf',  name: 'AMF',  port: 5000, role: 'Access and mobility. Runs the AI check and slice allowlist.', req: 'amf_req' },
-    { id: 'ausf', name: 'AUSF', port: 5002, role: 'Authentication of the UE.', req: 'ausf_req' },
-    { id: 'smf',  name: 'SMF',  port: 5003, role: 'PDU session management.', req: 'smf_req' },
-    { id: 'nrf',  name: 'NRF',  port: 5001, role: 'Registry of network functions.', req: 'nrf_req' }
-  ];
-
-  /* ---------- state ---------- */
-  const params = new URLSearchParams(location.search);
-  const defaultProm = (location.protocol === 'https:' ? 'https:' : 'http:') + '//' + (location.hostname || 'localhost') + ':9090';
-  const state = {
-    prom: params.get('prom') || store.get('prom') || defaultProm,
-    alerts: params.get('alerts') || store.get('alerts') || '../ai/alerts.log',
-    sample: false,
-    prev: null,
-    events: [],
-    chart: null,
-    timer: null,
-    busy: false
-  };
-
-  /* ---------- Prometheus access ---------- */
-  function promBase() {
-    let u = state.prom.trim().replace(/\/+$/, '');
-    if (!/^https?:\/\//i.test(u)) u = 'http://' + u;
-    return u;
-  }
-  async function promGet(path, query) {
-    const url = new URL(promBase() + path);
-    for (const k in query) url.searchParams.set(k, query[k]);
-    const r = await fetch(url, { cache: 'no-store' });
-    if (!r.ok) throw new Error('HTTP ' + r.status + ' from Prometheus');
-    const j = await r.json();
-    if (j.status !== 'success') throw new Error(j.error || 'Prometheus query failed');
-    return j.data;
-  }
-  async function liveSnapshot() {
-    const keys = Object.keys(TOTALS);
-    const [vals, upData] = await Promise.all([
-      Promise.all(keys.map(k => promGet('/api/v1/query', { query: 'sum(' + TOTALS[k] + ')' })
-        .then(d => (d.result.length ? Number(d.result[0].value[1]) : null)))),
-      promGet('/api/v1/query', { query: 'up{job=~"amf|ausf|smf|nrf"}' })
-    ]);
-    const totals = {}; keys.forEach((k, i) => { totals[k] = vals[i]; });
-    const up = {};
-    upData.result.forEach(r => { const j = r.metric.job; up[j] = (up[j] !== false) && r.value[1] === '1'; });
-    return { totals, up };
-  }
-  async function liveSeries() {
-    const end = Math.floor(Date.now() / 1000), start = end - WINDOW_S;
-    const out = {};
-    await Promise.all(SERIES.map(async s => {
-      const d = await promGet('/api/v1/query_range', { query: s.expr, start, end, step: 10 });
-      out[s.key] = d.result.length ? d.result[0].values.map(v => [Number(v[0]), Number(v[1])]) : [];
-    }));
-    return out;
-  }
-
-  /* ---------- sample data (only when the user asks for it) ---------- */
-  const sample = {
-    t: null, series: null,
-    init() {
-      this.t = { amf_req: 120, amf_threat: 2, amf_blocked: 9, ausf_req: 110, ausf_ok: 110, ausf_fail: 0, smf_req: 108, smf_sess: 108, nrf_req: 108, nrf_reg: 108 };
-      const now = Math.floor(Date.now() / 1000);
-      this.series = { req: [], blocked: [], threat: [] };
-      for (let i = WINDOW_S / 10; i >= 0; i--) {
-        const ts = now - i * 10;
-        this.series.req.push([ts, 8 + Math.random() * 10]);
-        this.series.blocked.push([ts, Math.random() * 2]);
-        this.series.threat.push([ts, Math.random() < 0.1 ? 1 : 0]);
-      }
-    },
-    tick() {
-      const t = this.t, n = Math.floor(Math.random() * 6), bad = Math.random() < 0.15 ? 1 : 0, deny = Math.random() < 0.2 ? 1 : 0;
-      t.amf_req += n + bad + deny; t.amf_threat += bad; t.amf_blocked += bad + deny;
-      t.ausf_req += n; t.ausf_ok += n; t.smf_req += n; t.smf_sess += n; t.nrf_req += n; t.nrf_reg += n;
-      const now = Math.floor(Date.now() / 1000);
-      this.series.req.push([now, n * 6 + 6]); this.series.blocked.push([now, (bad + deny) * 6]); this.series.threat.push([now, bad * 6]);
-      for (const k in this.series) while (this.series[k].length && this.series[k][0][0] < now - WINDOW_S) this.series[k].shift();
-      return { totals: { ...t }, up: { amf: true, ausf: true, smf: true, nrf: true } };
-    }
-  };
-
-  /* ---------- rendering ---------- */
-  function setStatus(kind, text) {
-    const s = $('#status'); s.className = 'status ' + kind; $('#statusText').textContent = text;
-  }
-  function setTags(mode) {
-    const label = { chartTag: { live: 'live', sample: 'sample data', off: 'no connection' },
-                    feedTag: { live: 'derived from counter changes', sample: 'sample data', off: 'no connection' } };
-    ['chartTag', 'feedTag'].forEach(id => { const t = $('#' + id); t.className = 'tag' + (mode === 'live' ? ' live' : ''); t.textContent = label[id][mode]; });
-  }
-  function renderKpis(cur) {
-    const t = cur.totals;
-    $('#k-req').textContent = fmtInt(t.amf_req);
-    $('#k-blocked').textContent = fmtInt(t.amf_blocked);
-    $('#k-threat').textContent = fmtInt(t.amf_threat);
-    $('#k-sess').textContent = fmtInt(t.smf_sess);
-    const jobs = NFS.map(n => cur.up[n.id]);
-    const upCount = jobs.filter(v => v === true).length;
-    const known = jobs.filter(v => v !== undefined).length;
-    const kUp = $('#k-up');
-    kUp.textContent = known ? upCount + ' / ' + NFS.length : '—';
-    kUp.className = 'value ' + (known && upCount === NFS.length ? 'c-green' : 'c-red');
-
-    $('#d-threat').textContent = fmtInt(t.amf_threat);
-    const other = (t.amf_blocked != null && t.amf_threat != null) ? Math.max(0, t.amf_blocked - t.amf_threat) : null;
-    $('#d-other').textContent = fmtInt(other);
-    $('#d-share').textContent = (t.amf_req > 0 && t.amf_blocked != null) ? (t.amf_blocked / t.amf_req * 100).toFixed(1) + '%' : '—';
-    $('#d-fail').textContent = fmtInt(t.ausf_fail);
-  }
-  function renderNFs(cur) {
-    const box = $('#nfCards'); box.replaceChildren();
-    const t = cur.totals;
-    NFS.forEach(nf => {
-      const c = el('div', 'card nf');
-      const top = el('div', 'top');
-      top.append(el('span', 'name', nf.name));
-      const up = cur.up[nf.id];
-      top.append(el('span', 'pill ' + (up === undefined ? 'unknown' : up ? 'up' : 'down'), up === undefined ? 'NO DATA' : up ? 'UP' : 'DOWN'));
-      c.append(top, el('div', 'role', nf.role));
-      const dl = el('dl');
-      const add = (k, v) => { dl.append(el('dt', '', k), el('dd', '', v)); };
-      add('Port', String(nf.port));
-      add('Requests', fmtInt(t[nf.req]));
-      if (nf.id === 'amf') { add('Blocked', fmtInt(t.amf_blocked)); add('AI threats', fmtInt(t.amf_threat)); }
-      if (nf.id === 'ausf') { add('Auth success', fmtInt(t.ausf_ok)); add('Auth failure', fmtInt(t.ausf_fail)); }
-      if (nf.id === 'smf') add('Sessions created', fmtInt(t.smf_sess));
-      if (nf.id === 'nrf') add('Registrations', fmtInt(t.nrf_reg));
-      c.append(dl);
-      box.append(c);
-    });
-  }
-  function niceMax(v) {
-    const p = Math.pow(10, Math.floor(Math.log10(v))), n = v / p;
-    return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * p;
-  }
-  function renderChart(series, emptyMsg) {
-    const svg = $('#chart'); svg.replaceChildren();
-    const W = 960, H = 280, m = { l: 46, r: 12, t: 12, b: 26 };
-    const pts = SERIES.flatMap(s => series[s.key] || []);
-    if (!pts.length) {
-      svg.append(svgEl('text', { x: W / 2, y: H / 2, 'text-anchor': 'middle' }, emptyMsg || 'No data in the last 15 minutes. Send some requests to the AMF.'));
-      state.chart = null; return;
-    }
-    const t1 = Math.max(...pts.map(p => p[0])), t0 = t1 - WINDOW_S;
-    const ymax = niceMax(Math.max(1, ...pts.map(p => p[1])));
-    const x = t => m.l + (t - t0) / WINDOW_S * (W - m.l - m.r);
-    const y = v => H - m.b - (v / ymax) * (H - m.t - m.b);
-    for (let i = 0; i <= 4; i++) {
-      const v = ymax * i / 4, yy = y(v);
-      svg.append(svgEl('line', { x1: m.l, x2: W - m.r, y1: yy, y2: yy, stroke: '#223049', 'stroke-width': 1 }));
-      svg.append(svgEl('text', { x: m.l - 6, y: yy + 4, 'text-anchor': 'end' }, v >= 10 ? String(Math.round(v)) : v.toFixed(1)));
-    }
-    [[0, '-15 min'], [300, '-10 min'], [600, '-5 min'], [900, 'now']].forEach(([off, label]) => {
-      svg.append(svgEl('text', { x: x(t0 + off), y: H - 8, 'text-anchor': off === 0 ? 'start' : off === 900 ? 'end' : 'middle' }, label));
-    });
-    SERIES.forEach(s => {
-      const data = series[s.key] || [];
-      if (!data.length) return;
-      const d = data.map((p, i) => (i ? 'L' : 'M') + x(p[0]).toFixed(1) + ' ' + y(p[1]).toFixed(1)).join(' ');
-      svg.append(svgEl('path', { d, fill: 'none', style: 'stroke:' + s.color, 'stroke-width': 2, 'stroke-linejoin': 'round' }));
-    });
-    const cross = svgEl('line', { y1: m.t, y2: H - m.b, stroke: '#93a3bb', 'stroke-width': 1, 'stroke-dasharray': '3 3', visibility: 'hidden' });
-    svg.append(cross);
-    state.chart = { series, t0, t1, x, cross, W };
-  }
-  function bindChartHover() {
-    const svg = $('#chart'), tip = $('#tip'), box = svg.parentElement;
-    const hide = () => { tip.style.display = 'none'; if (state.chart) state.chart.cross.setAttribute('visibility', 'hidden'); };
-    svg.addEventListener('mouseleave', hide);
-    svg.addEventListener('mousemove', ev => {
-      const c = state.chart; if (!c) return;
-      const rect = svg.getBoundingClientRect();
-      const px = (ev.clientX - rect.left) / rect.width * c.W;
-      const t = c.t0 + Math.min(1, Math.max(0, (px - 46) / (c.W - 46 - 12))) * WINDOW_S;
-      const near = key => {
-        const d = c.series[key] || []; if (!d.length) return null;
-        return d.reduce((a, b) => (Math.abs(b[0] - t) < Math.abs(a[0] - t) ? b : a));
-      };
-      const first = near('req') || near('blocked') || near('threat'); if (!first) return;
-      c.cross.setAttribute('x1', c.x(first[0])); c.cross.setAttribute('x2', c.x(first[0])); c.cross.setAttribute('visibility', 'visible');
-      tip.replaceChildren(el('div', '', hhmmss(new Date(first[0] * 1000))));
-      SERIES.forEach(s => { const p = near(s.key); tip.append(el('div', '', s.label + ': ' + (p ? fmtRate(p[1]) : '—'))); });
-      tip.style.display = 'block';
-      const bx = box.getBoundingClientRect();
-      tip.style.left = Math.min(ev.clientX - bx.left + 12, bx.width - 160) + 'px';
-      tip.style.top = Math.max(0, ev.clientY - bx.top - 20) + 'px';
-    });
-  }
-  function pushEvent(level, text) {
-    state.events.unshift({ t: new Date(), level, text });
-    if (state.events.length > 60) state.events.pop();
-    renderFeed();
-  }
-  function renderFeed() {
-    const ul = $('#feed'); ul.replaceChildren();
-    if (!state.events.length) {
-      const li = el('li'); li.append(el('time'), el('span', 'lv info'), el('span', '', 'Waiting for the first change in the counters…')); ul.append(li); return;
-    }
-    state.events.forEach(e => {
-      const li = el('li');
-      li.append(el('time', '', hhmmss(e.t)), el('span', 'lv ' + e.level), el('span', '', e.text));
-      ul.append(li);
-    });
-  }
-  function deriveEvents(prev, cur) {
-    if (!prev) return;
-    const d = k => {
-      const a = prev.totals[k], b = cur.totals[k];
-      if (a == null || b == null) return 0;
-      return b >= a ? b - a : b;                 // a drop means the counter restarted
-    };
-    const threat = d('amf_threat');
-    if (threat > 0) pushEvent('bad', 'AI engine flagged ' + threat + ' request' + (threat > 1 ? 's' : '') + ' as anomalous and blocked ' + (threat > 1 ? 'them' : 'it') + ' (HTTP 403)');
-    const other = Math.max(0, d('amf_blocked') - threat);
-    if (other > 0) pushEvent('warn', other + ' request' + (other > 1 ? 's' : '') + ' blocked by the slice allowlist or a failed authentication');
-    const fail = d('ausf_fail');
-    if (fail > 0) pushEvent('warn', fail + ' failed authentication' + (fail > 1 ? 's' : '') + ' at AUSF');
-    const sess = d('smf_sess');
-    if (sess > 0) pushEvent('ok', sess + ' PDU session' + (sess > 1 ? 's' : '') + ' created at SMF');
-    const reg = d('nrf_reg');
-    if (reg > 0) pushEvent('info', reg + ' registration' + (reg > 1 ? 's' : '') + ' stored at NRF');
-    NFS.forEach(nf => {
-      if (prev.up[nf.id] !== undefined && cur.up[nf.id] !== undefined && prev.up[nf.id] !== cur.up[nf.id]) {
-        pushEvent(cur.up[nf.id] ? 'ok' : 'bad', nf.name + ' is now ' + (cur.up[nf.id] ? 'UP' : 'DOWN'));
-      }
-    });
-  }
-
-  /* ---------- alerts.log panel ---------- */
-  function parseAlertLine(line) {
-    const out = {};
-    line.split('|').forEach(part => {
-      const i = part.indexOf('=');
-      if (i > 0) out[part.slice(0, i).trim().toUpperCase()] = part.slice(i + 1).trim();
-    });
-    return out;
-  }
-  function renderAlertsTable(rows, total, isSample) {
-    const body = $('#alertsBody'); body.replaceChildren();
-    if (!rows.length) { body.append(el('div', 'empty', 'No THREAT lines yet.')); return; }
-    const table = el('table');
-    const head = el('tr'); ['UE', 'Slice', 'Requests/min', 'Failed auth'].forEach((h, i) => head.append(Object.assign(el('th', i > 1 ? 'num' : '', h))));
-    table.append(head);
-    rows.forEach(r => {
-      const tr = el('tr');
-      tr.append(el('td', 'mono', r.UE || '—'), el('td', 'mono', r.SLICE || '—'), el('td', 'num', r.RPM || '—'), el('td', 'num', r.FAILS || '—'));
-      table.append(tr);
-    });
-    const wrapT = el("div"); wrapT.style.overflowX = "auto"; wrapT.append(table);
-    body.append(wrapT, el('p', 'note', (isSample ? 'Sample rows. ' : '') + 'Showing the latest ' + rows.length + ' of ' + total + ' detections. Older log lines have no request or failure counts.'));
-  }
-  async function pollAlerts() {
-    const tag = $('#alertsTag');
-    if (state.sample) {
-      tag.textContent = 'sample'; tag.className = 'tag';
-      renderAlertsTable([{ UE: 'sample-ue-1', SLICE: 'sample-slice', RPM: '160', FAILS: '0' }, { UE: 'sample-ue-2', SLICE: 'sample-slice', RPM: '152', FAILS: '1' }], 2, true);
-      return;
-    }
-    try {
-      const r = await fetch(state.alerts, { cache: 'no-store' });
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      const lines = (await r.text()).split('\n').filter(l => l.startsWith('THREAT'));
-      tag.textContent = 'alerts.log'; tag.className = 'tag live';
-      renderAlertsTable(lines.slice(-12).reverse().map(parseAlertLine), lines.length, false);
-    } catch (e) {
-      tag.textContent = 'alerts.log not reachable'; tag.className = 'tag';
-      const body = $('#alertsBody'); body.replaceChildren();
-      body.append(el('div', 'empty', 'Cannot read ' + state.alerts + '.'),
-        el('p', 'note', 'Serve the repository root (for example: python3 -m http.server 8000) and open /Dashboard/ so ../ai/alerts.log is reachable, or enter another URL above.'));
-    }
-  }
-
-  /* ---------- help box for connection problems ---------- */
-  function showHelp(err) {
-    const h = $('#help'); h.classList.add('show');
-    $('#helpTitle').textContent = 'Cannot read metrics from Prometheus at ' + promBase() + ' (' + err.message + ').';
-    const body = $('#helpBody'); body.replaceChildren();
-    const ul = el('ul');
-    [
-      'Check that Prometheus is running and that the address above is reachable from this browser.',
-      'If the network functions require client certificates (mTLS), Prometheus must scrape them over https. In prometheus.yml add scheme: https and a tls_config with ca_file, cert_file, key_file and server_name for each job; otherwise every job shows DOWN.',
-      'To show the dashboard without a running platform, press "Use sample data" (clearly labelled).'
-    ].forEach(t => ul.append(el('li', '', t)));
-    body.append(ul);
-  }
-  function hideHelp() { $('#help').classList.remove('show'); }
-
-  /* ---------- polling ---------- */
-  async function poll() {
-    if (state.busy) return; state.busy = true;
-    try {
-      let cur, series;
-      if (state.sample) { cur = sample.tick(); series = sample.series; }
-      else { [cur, series] = await Promise.all([liveSnapshot(), liveSeries()]); }
-      deriveEvents(state.prev, cur);
-      state.prev = cur;
-      renderKpis(cur); renderNFs(cur); renderChart(series);
-      hideHelp();
-      state.errored = false;
-      setTags(state.sample ? 'sample' : 'live');
-      if (state.sample) setStatus('sample', 'Sample data · ' + hhmmss(new Date()));
-      else setStatus('ok', 'Live from Prometheus · updated ' + hhmmss(new Date()));
-    } catch (e) {
-      setStatus('bad', 'Prometheus unreachable');
-      setTags('off');
-      renderChart({}, 'No data: Prometheus is unreachable.');
-      showHelp(e);
-      if (!state.errored) { pushEvent('bad', 'Cannot read metrics: ' + e.message); state.errored = true; }
-    } finally {
-      state.busy = false;
-    }
-    pollAlerts();
-  }
-  function restart() {
-    clearInterval(state.timer);
-    state.prev = null; state.errored = false;
-    $('#banner').classList.toggle('show', state.sample);
-    $('#sampleBtn').textContent = state.sample ? 'Use live data' : 'Use sample data';
-    poll();
-    state.timer = setInterval(poll, POLL_MS);
-  }
-
-  /* ---------- wiring ---------- */
-  $('#promUrl').value = state.prom;
-  $('#alertsUrl').value = state.alerts;
-  $('#settings').addEventListener('submit', ev => {
-    ev.preventDefault();
-    state.prom = $('#promUrl').value.trim() || defaultProm;
-    state.alerts = $('#alertsUrl').value.trim() || '../ai/alerts.log';
-    store.set('prom', state.prom); store.set('alerts', state.alerts);
-    state.sample = false; state.events = []; renderFeed(); restart();
-  });
-  $('#sampleBtn').addEventListener('click', () => {
-    state.sample = !state.sample;
-    if (state.sample) sample.init();
-    state.events = []; renderFeed(); restart();
-  });
-  $$('nav button').forEach(b => b.addEventListener('click', () => {
-    $$('nav button').forEach(x => x.setAttribute('aria-selected', String(x === b)));
-    $$('section.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + b.dataset.tab));
-  }));
-  bindChartHover();
-  restart();
-})();
-</script>
-</body>
-</html>
+    { key
