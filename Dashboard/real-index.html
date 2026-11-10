@@ -7,80 +7,103 @@
 <style>
   :root {
     color-scheme: dark;
-    --bg: #0b0f17; --panel: #121826; --panel-2: #0e1420; --line: #223049;
-    --text: #e6edf7; --muted: #93a3bb; --cyan: #38bdf8; --green: #34d399;
-    --amber: #fbbf24; --red: #f87171; --violet: #a78bfa; --radius: 12px;
+    --bg: #0b0f17;
+    --panel: #121826;
+    --panel-2: #0e1420;
+    --line: #223049;
+    --text: #e6edf7;
+    --muted: #93a3bb;
+    --cyan: #38bdf8;
+    --green: #34d399;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --violet: #a78bfa;
+    --radius: 12px;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; background: var(--bg); color: var(--text); }
-  body { font: 14px/1.5 system-ui, sans-serif; padding-bottom: 40px; }
+  body {
+    font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    padding-bottom: 40px;
+  }
   .wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
-  header { border-bottom: 1px solid var(--line); background: linear-gradient(135deg, #0f172a, #1e1b4b); box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
+  header { border-bottom: 1px solid var(--line); background: var(--panel-2); }
   .head { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; padding: 14px 0; }
-  h1 { font-size: 20px; margin: 0; font-weight: 800; background: linear-gradient(45deg, var(--cyan), var(--violet)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  h1 { font-size: 18px; margin: 0; letter-spacing: .2px; }
   .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
   .status { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; background: var(--panel); }
   .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
-  .status.ok .dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
-  .status.bad .dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
-  .status.sample .dot { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+  .status.ok .dot { background: var(--green); }
+  .status.bad .dot { background: var(--red); }
+  .status.sample .dot { background: var(--amber); }
   .settings { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 0 0 14px; }
   .settings label { color: var(--muted); font-size: 12px; }
   input[type=text] { background: var(--bg); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 6px 10px; font: inherit; min-width: 230px; }
-  button { background: var(--panel); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 6px 12px; font: inherit; cursor: pointer; transition: all 0.2s; }
-  button:hover { border-color: var(--cyan); background: #1a2438; }
+  button { background: var(--panel); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 6px 12px; font: inherit; cursor: pointer; }
+  button:hover { border-color: var(--cyan); }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
   #banner { display: none; background: #3b2a05; color: #fde68a; border-bottom: 1px solid #7c5a10; text-align: center; padding: 8px 16px; font-weight: 600; }
   #banner.show { display: block; }
   nav { display: flex; gap: 4px; flex-wrap: wrap; padding: 12px 0 0; }
-  nav button { border-radius: 8px 8px 0 0; border-bottom: none; color: var(--muted); background: var(--panel-2); }
-  nav button[aria-selected=true] { color: var(--cyan); background: var(--panel); border-color: var(--cyan); border-bottom: 2px solid var(--cyan); }
+  nav button { border-radius: 8px 8px 0 0; border-bottom: none; color: var(--muted); }
+  nav button[aria-selected=true] { color: var(--text); background: var(--panel); border-color: var(--cyan); }
   main { padding-top: 16px; }
-  section.tab { display: none; } section.tab.active { display: block; }
+  section.tab { display: none; }
+  section.tab.active { display: block; }
   .grid { display: grid; gap: 12px; }
   .kpis { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
   .two { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
-  .card { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--cyan); border-radius: var(--radius); padding: 14px 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: transform 0.2s; }
-  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
-  .card h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin: 0 0 10px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; min-width: 0; }
+  .card h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin: 0 0 10px; font-weight: 600; }
   .kpi .label { color: var(--muted); font-size: 12px; }
-  .kpi .value { font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .kpi .value { font-size: 30px; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums; }
   .kpi .hint { color: var(--muted); font-size: 11px; margin-top: 2px; }
   .c-cyan { color: var(--cyan); } .c-green { color: var(--green); } .c-amber { color: var(--amber); } .c-red { color: var(--red); } .c-violet { color: var(--violet); }
-  .tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); margin-left: 6px; }
-  .tag.live { border-color: #1f6b52; color: var(--green); background: #0f3a2c; }
+  .tag { text-transform: none; letter-spacing: 0; display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); vertical-align: middle; margin-left: 6px; }
+  .tag.cfg { border-color: #3b4a66; }
+  .tag.live { border-color: #1f6b52; color: var(--green); }
   .pill { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; }
-  .pill.up, .pill.built { background: #0f3a2c; color: var(--green); border: 1px solid #1f6b52; }
-  .pill.down { background: #471717; color: var(--red); border: 1px solid #7a2a2a; }
-  .pill.unknown { background: #232c3d; color: var(--muted); border: 1px dashed #475569; }
-  .pill.partial { background: #3b2a05; color: var(--amber); border: 1px solid #7c5a10; }
-  .pill.target { background: #232c3d; color: var(--muted); border: 1px dashed #475569; }
+  .pill.up { background: #0f3a2c; color: var(--green); }
+  .pill.down { background: #471717; color: var(--red); }
+  .pill.unknown { background: #232c3d; color: var(--muted); }
+  .pill.built { background: #0f3a2c; color: var(--green); }
+  .pill.partial { background: #3b2a05; color: var(--amber); }
+  .pill.target { background: #232c3d; color: var(--muted); }
   .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
   .legend i { display: inline-block; width: 18px; height: 3px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
-  .chartbox { position: relative; } svg { display: block; width: 100%; height: auto; }
-  svg text { fill: var(--muted); font-size: 11px; }
-  #tip { position: absolute; pointer-events: none; background: #0b0f17; border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; font-size: 12px; display: none; z-index: 2; box-shadow: 0 4px 12px rgba(0,0,0,0.8); }
+  .chartbox { position: relative; }
+  svg { display: block; width: 100%; height: auto; }
+  svg text { fill: var(--muted); font-size: 11px; font-family: inherit; }
+  #tip { position: absolute; pointer-events: none; background: #0b0f17; border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; font-size: 12px; display: none; white-space: nowrap; z-index: 2; }
   .empty { color: var(--muted); text-align: center; padding: 40px 10px; }
-  ul.feed { list-style: none; margin: 0; padding: 10px; max-height: 330px; overflow: auto; background: #05080f; border: 1px solid #1e293b; border-radius: 6px; font-family: 'Courier New', monospace; }
-  ul.feed li { display: grid; grid-template-columns: 64px 12px 1fr; gap: 8px; padding: 8px 0; border-bottom: 1px dashed #1e293b; align-items: baseline; }
+  ul.feed { list-style: none; margin: 0; padding: 0; max-height: 330px; overflow: auto; }
+  ul.feed li { display: grid; grid-template-columns: 64px 12px 1fr; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
   ul.feed li:last-child { border-bottom: none; }
-  ul.feed time { color: var(--muted); font-size: 12px; }
+  ul.feed time { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 12px; }
   ul.feed .lv { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
   .lv.ok { background: var(--green); } .lv.warn { background: var(--amber); } .lv.bad { background: var(--red); } .lv.info { background: var(--cyan); }
   table { border-collapse: collapse; width: 100%; }
-  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); }
-  th { color: var(--muted); font-size: 12px; }
-  .nf .top { display: flex; justify-content: space-between; align-items: center; }
-  .nf .name { font-size: 18px; font-weight: 700; color: var(--cyan); }
-  .nf dl { margin: 8px 0 0; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 13px; }
-  .nf dt { color: var(--muted); } .nf dd { margin: 0; text-align: right; font-weight: 600; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; }
+  .nf { display: grid; gap: 8px; }
+  .nf .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .nf .name { font-size: 18px; font-weight: 700; }
+  .nf .role { color: var(--muted); font-size: 12px; }
+  .nf dl { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 13px; }
+  .nf dt { color: var(--muted); } .nf dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip { padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line); font-weight: 600; }
-  .chip.allow { border-color: #1f6b52; color: var(--green); background: #0f3a2c; }
-  .chip.deny { border-color: #7a2a2a; color: var(--red); background: #471717; }
-  ol.steps { margin: 0; padding-left: 20px; } ol.steps li { margin: 4px 0; transition: color 0.3s; }
+  .chip.allow { border-color: #1f6b52; color: var(--green); }
+  .chip.deny { border-color: #7a2a2a; color: var(--red); }
+  ol.steps { margin: 0; padding-left: 20px; } ol.steps li { margin: 4px 0; }
   .note { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
   .help { border-left: 3px solid var(--amber); background: #261d08; padding: 10px 14px; border-radius: 0 8px 8px 0; margin-bottom: 12px; display: none; }
   .help.show { display: block; }
+  .help pre { margin: 6px 0 0; white-space: pre-wrap; }
+  footer { color: var(--muted); font-size: 12px; margin-top: 18px; }
+  @media (max-width: 560px) { .kpi .value { font-size: 26px; } input[type=text] { min-width: 100%; } }
 </style>
 </head>
 <body>
@@ -90,9 +113,9 @@
     <div class="head">
       <div>
         <h1>5G/6G Network Security Platform</h1>
-        <div class="sub">Simulated 5G core on K3s with slice allowlist, AI anomaly detection and mTLS</div>
+        <div class="sub">Simulated 5G core (AMF, AUSF, SMF, NRF) on K3s with slice allowlist, AI anomaly detection and mTLS</div>
       </div>
-      <div id="status" class="status"><span class="dot"></span><span id="statusText">Connecting&hellip;</span></div>
+      <div id="status" class="status" role="status" aria-live="polite"><span class="dot"></span><span id="statusText">Connecting&hellip;</span></div>
     </div>
     <form class="settings" id="settings" autocomplete="off">
       <label for="promUrl">Prometheus</label>
@@ -100,23 +123,27 @@
       <label for="alertsUrl">alerts.log</label>
       <input type="text" id="alertsUrl" spellcheck="false">
       <button type="submit">Connect</button>
-      <button type="button" id="sampleBtn">Use sample data</button>
+      <button type="button" id="sampleBtn" title="Show clearly labelled sample numbers, for example when Prometheus is not running">Use sample data</button>
     </form>
   </div>
 </header>
 <div id="banner">SAMPLE DATA: the numbers below are generated in your browser and are not from your platform.</div>
 
 <div class="wrap">
-  <nav>
-    <button aria-selected="true" data-tab="overview">Overview</button>
-    <button aria-selected="false" data-tab="nfs">Network functions</button>
-    <button aria-selected="false" data-tab="detect">Threat detection</button>
-    <button aria-selected="false" data-tab="platform">Platform &amp; CI/CD</button>
+  <nav role="tablist" aria-label="Dashboard sections">
+    <button role="tab" aria-selected="true" data-tab="overview">Overview</button>
+    <button role="tab" aria-selected="false" data-tab="nfs">Network functions</button>
+    <button role="tab" aria-selected="false" data-tab="detect">Threat detection</button>
+    <button role="tab" aria-selected="false" data-tab="platform">Platform and scope</button>
   </nav>
 
   <main>
-    <div class="help" id="help"><strong id="helpTitle">Cannot read metrics.</strong><div id="helpBody"></div></div>
+    <div class="help" id="help">
+      <strong id="helpTitle">Cannot read metrics from Prometheus.</strong>
+      <div id="helpBody"></div>
+    </div>
 
+    <!-- ============ OVERVIEW ============ -->
     <section class="tab active" id="tab-overview">
       <div class="grid kpis">
         <div class="card kpi"><div class="label">AMF requests</div><div class="value c-cyan" id="k-req">&mdash;</div><div class="hint">amf_requests_total</div></div>
@@ -125,266 +152,554 @@
         <div class="card kpi"><div class="label">PDU sessions created</div><div class="value c-green" id="k-sess">&mdash;</div><div class="hint">smf_session_created_total</div></div>
         <div class="card kpi"><div class="label">Network functions up</div><div class="value" id="k-up">&mdash;</div><div class="hint">Prometheus <code>up</code> for 4 jobs</div></div>
       </div>
+
       <div class="grid two" style="margin-top:12px">
         <div class="card" style="grid-column: 1 / -1">
           <h2>Traffic and detections, last 15 minutes <span class="tag live" id="chartTag">live</span></h2>
-          <div class="legend"><span><i style="background:var(--cyan)"></i>Requests/min</span><span><i style="background:var(--amber)"></i>Blocked/min</span><span><i style="background:var(--red)"></i>AI threats/min</span></div>
-          <div class="chartbox"><svg id="chart" viewBox="0 0 960 280"></svg><div id="tip"></div></div>
+          <div class="legend">
+            <span><i style="background:var(--cyan)"></i>Requests per minute</span>
+            <span><i style="background:var(--amber)"></i>Blocked per minute</span>
+            <span><i style="background:var(--red)"></i>AI threats per minute</span>
+          </div>
+          <div class="chartbox"><svg id="chart" viewBox="0 0 960 280" role="img" aria-label="Line chart of requests, blocked requests and AI threats per minute over the last 15 minutes"></svg><div id="tip"></div></div>
+          <p class="note">Per-minute rates are computed by Prometheus from the AMF counters over a 1-minute window.</p>
         </div>
         <div class="card" style="grid-column: 1 / -1">
-          <h2>Event feed <span class="tag live" id="feedTag">live</span></h2>
-          <ul class="feed" id="feed"><li><time></time><span class="lv info"></span><span>Waiting&hellip;</span></li></ul>
+          <h2>Event feed <span class="tag live" id="feedTag">derived from counter changes</span></h2>
+          <ul class="feed" id="feed"><li><time></time><span class="lv info"></span><span>Waiting for the first change in the counters&hellip;</span></li></ul>
         </div>
       </div>
     </section>
 
+    <!-- ============ NETWORK FUNCTIONS ============ -->
     <section class="tab" id="tab-nfs">
       <div class="grid two" id="nfCards"></div>
+
+      <div class="card" style="margin-top:12px">
+        <h2>Registration call flow in <code>core/amf.py</code> <span class="tag cfg">from the code</span></h2>
+        <svg viewBox="0 0 760 236" role="img" aria-label="UE request enters the AMF, which checks the AI engine and the slice allowlist, then calls AUSF, SMF and NRF over mutual TLS">
+          <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#93a3bb"/></marker></defs>
+          <g stroke="#223049" fill="#0e1420">
+            <rect x="8" y="78" width="96" height="54" rx="10"/>
+            <rect x="190" y="50" width="190" height="110" rx="10" stroke="#38bdf8"/>
+            <rect x="520" y="8" width="120" height="46" rx="10"/>
+            <rect x="520" y="82" width="120" height="46" rx="10"/>
+            <rect x="520" y="156" width="120" height="46" rx="10"/>
+          </g>
+          <g text-anchor="middle" style="fill:#e6edf7">
+            <text x="56" y="100" style="fill:#e6edf7;font-size:14px;font-weight:700">UE</text>
+            <text x="56" y="118">POST /ue-contexts</text>
+            <text x="285" y="76" style="fill:#e6edf7;font-size:14px;font-weight:700">AMF :5000</text>
+            <text x="285" y="100">1. AI check (rate, failures)</text>
+            <text x="285" y="120">2. slice allowlist</text>
+            <text x="285" y="140">3. orchestrates the rest</text>
+            <text x="580" y="36" style="fill:#e6edf7;font-size:14px;font-weight:700">AUSF :5002</text>
+            <text x="580" y="110" style="fill:#e6edf7;font-size:14px;font-weight:700">SMF :5003</text>
+            <text x="580" y="184" style="fill:#e6edf7;font-size:14px;font-weight:700">NRF :5001</text>
+          </g>
+          <g stroke="#93a3bb" stroke-width="1.5" fill="none" marker-end="url(#arr)">
+            <path d="M104 105 H188"/>
+            <path d="M380 82 L518 32"/>
+            <path d="M380 105 H518"/>
+            <path d="M380 128 L518 180"/>
+          </g>
+          <g text-anchor="middle">
+            <text x="438" y="42">authenticate</text>
+            <text x="450" y="97">PDU session</text>
+            <text x="428" y="182">register NF</text>
+            <text x="380" y="228" style="font-size:11px">AMF to AUSF, SMF, NRF: mutual TLS, client certificate required</text>
+          </g>
+        </svg>
+        <p class="note">AUSF in this prototype always returns SUCCESS, so the failed-authentication counter normally stays at 0.</p>
+      </div>
     </section>
 
+    <!-- ============ THREAT DETECTION ============ -->
     <section class="tab" id="tab-detect">
       <div class="grid kpis">
-        <div class="card kpi"><div class="label">AI-detected threats</div><div class="value c-red" id="d-threat">&mdash;</div></div>
-        <div class="card kpi"><div class="label">Blocked by allowlist/auth</div><div class="value c-amber" id="d-other">&mdash;</div></div>
-        <div class="card kpi"><div class="label">Share blocked</div><div class="value" id="d-share">&mdash;</div></div>
-        <div class="card kpi"><div class="label">Failed auths</div><div class="value c-violet" id="d-fail">&mdash;</div></div>
+        <div class="card kpi"><div class="label">AI-detected threats</div><div class="value c-red" id="d-threat">&mdash;</div><div class="hint">amf_threats_total</div></div>
+        <div class="card kpi"><div class="label">Blocked by allowlist or auth</div><div class="value c-amber" id="d-other">&mdash;</div><div class="hint">blocked minus AI threats</div></div>
+        <div class="card kpi"><div class="label">Share of requests blocked</div><div class="value" id="d-share">&mdash;</div><div class="hint">blocked / requests</div></div>
+        <div class="card kpi"><div class="label">Failed authentications</div><div class="value c-violet" id="d-fail">&mdash;</div><div class="hint">ausf_auth_failure_total</div></div>
       </div>
+
       <div class="grid two" style="margin-top:12px">
         <div class="card">
-          <h2>Slice allowlist <span class="tag">config</span></h2>
+          <h2>Slice allowlist <span class="tag cfg">config: ALLOWED_SLICES in amf.py</span></h2>
           <div class="chips">
-            <span class="chip allow">slice-a &#10003;</span>
-            <span class="chip allow">slice-b &#10003;</span>
-            <span class="chip deny">other &#10007; 403</span>
+            <span class="chip allow">slice-a &#10003; allowed</span>
+            <span class="chip allow">slice-b &#10003; allowed</span>
+            <span class="chip deny">any other slice &#10007; HTTP 403</span>
           </div>
+          <p class="note">The slice ID is read from the request body (default <code>slice-a</code> if missing). Metrics are not labelled per slice, so the counts on this page are totals.</p>
         </div>
         <div class="card">
+          <h2>Detection model <span class="tag cfg">config: ai/train_model.py</span></h2>
+          <table>
+            <tr><th scope="row">Algorithm</th><td>scikit-learn IsolationForest, 100 trees, contamination 0.2</td></tr>
+            <tr><th scope="row">Features</th><td>requests per minute, failed authentications (per UE and slice, last 60 s)</td></tr>
+            <tr><th scope="row">Training data</th><td>11 hand-written synthetic rows</td></tr>
+            <tr><th scope="row">Output</th><td><code>-1</code> = anomaly, request blocked with HTTP 403 and written to <code>alerts.log</code></td></tr>
+            <tr><th scope="row">Observed trigger</th><td>about 144 or more requests per minute with no failed logins (measured on the committed model)</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h2>Decision order inside the AMF <span class="tag cfg">from the code</span></h2>
+          <ol class="steps">
+            <li>Count this UE's requests and failures in the last 60 seconds.</li>
+            <li>Ask the model. If anomalous: HTTP 403 <code>blocked_by_ai</code>, increment threat and blocked counters, append to <code>alerts.log</code>.</li>
+            <li>Check the slice against the allowlist. If not allowed: HTTP 403 <code>unauthorized slice</code>, increment blocked.</li>
+            <li>Authenticate at AUSF, create the session at SMF, register at NRF, reply 201.</li>
+          </ol>
+        </div>
+        <div class="card" style="grid-column: 1 / -1">
           <h2>Latest detections <span class="tag live" id="alertsTag">alerts.log</span></h2>
           <div id="alertsBody"><div class="empty">Loading&hellip;</div></div>
         </div>
       </div>
     </section>
 
+    <!-- ============ PLATFORM ============ -->
     <section class="tab" id="tab-platform">
       <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(420px, 1fr))">
         <div class="card">
-          <h2>CI/CD pipeline <span class="tag">Jenkinsfile</span></h2>
-          <button id="runCiBtn" style="margin-bottom:12px; background:#0f3a2c; color:var(--green); border-color:#1f6b52; font-weight:700;">▶ Run CI/CD Simulation</button>
-          <ol class="steps" id="cicdList">
+          <h2>Security controls <span class="tag cfg">from the repository</span></h2>
+          <table>
+            <tr><th>Control</th><th>How it is implemented</th></tr>
+            <tr><td>Mutual TLS</td><td>All four functions use <code>CERT_REQUIRED</code>; private CA and per-function certificates from <code>gen_certs.sh</code></td></tr>
+            <tr><td>Micro-segmentation</td><td>NetworkPolicies in <code>security/</code>: default deny, AMF flows, NRF only from AMF</td></tr>
+            <tr><td>Tenant isolation</td><td>Namespaces tenant-a, tenant-b, tenant-industrial, tenant-medical with <code>edge-isolation.yaml</code></td></tr>
+            <tr><td>Slice protection</td><td>Allowlist plus AI anomaly check at the AMF</td></tr>
+            <tr><td>Monitoring</td><td>Prometheus scrapes /metrics from each function every 5 s; Grafana alert</td></tr>
+            <tr><td>Compliance checks</td><td>Shell scripts in <code>compliance/</code>: deployment health, ETSI-style, security and zero-trust checks</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h2>CI/CD pipeline <span class="tag cfg">Jenkinsfile stages</span></h2>
+          <ol class="steps">
             <li>Checkout from GitHub</li>
             <li>Generate certificates</li>
             <li>Compliance checks</li>
-            <li>Build Base Image</li>
-            <li>Build AMF, NRF, AUSF, SMF</li>
-            <li>Security scan (Trivy)</li>
+            <li>Build base image, then AMF, NRF, AUSF, SMF images in parallel</li>
+            <li>Security scan (Trivy), optional stage</li>
             <li>Deploy to Kubernetes (K3s)</li>
-            <li>Verify rollout</li>
+            <li>Verify rollout of all four deployments</li>
           </ol>
+          <p class="note">This list is the pipeline definition. Build results live in Jenkins.</p>
         </div>
-        <div class="card">
-          <h2>Component Status</h2>
+        <div class="card" style="grid-column: 1 / -1">
+          <h2>What is built and what is target design</h2>
           <table>
-            <tr><td>Flask NFs</td><td><span class="pill built">Built</span></td></tr>
-            <tr><td>mTLS</td><td><span class="pill built">Built</span></td></tr>
-            <tr><td>AI IsolationForest</td><td><span class="pill built">Built</span></td></tr>
-            <tr><td>Jenkins CI/CD</td><td><span class="pill partial">Partial</span></td></tr>
-            <tr><td>Istio/Open5GS</td><td><span class="pill target">Target</span></td></tr>
+            <tr><th>Component on the slides</th><th>Status</th><th>Note</th></tr>
+            <tr><td>AMF, AUSF, SMF, NRF as Flask services</td><td><span class="pill built">Built</span></td><td>Functional model, not a full 3GPP stack</td></tr>
+            <tr><td>Docker, K3s orchestration</td><td><span class="pill built">Built</span></td><td>One replica per function</td></tr>
+            <tr><td>Mutual TLS between functions</td><td><span class="pill built">Built</span></td><td>Private CA, no automated rotation</td></tr>
+            <tr><td>NetworkPolicies and tenant namespaces</td><td><span class="pill built">Built</span></td><td>Policies only; no workloads in tenant namespaces</td></tr>
+            <tr><td>Slice allowlist</td><td><span class="pill built">Built</span></td><td>Logical slice IDs, not end-to-end slicing</td></tr>
+            <tr><td>AI anomaly detection (IsolationForest)</td><td><span class="pill built">Built</span></td><td>Small synthetic training set</td></tr>
+            <tr><td>Prometheus and Grafana alerting</td><td><span class="pill built">Built</span></td><td>Counters from the AMF and other functions</td></tr>
+            <tr><td>Jenkins CI/CD</td><td><span class="pill partial">Partial</span></td><td>Manual trigger; image scan stage optional</td></tr>
+            <tr><td>Compliance automation</td><td><span class="pill partial">Partial</span></td><td>Health and configuration checks, not 3GPP conformance</td></tr>
+            <tr><td>Open5GS core, UPF, gNodeB</td><td><span class="pill target">Target</span></td><td>Reference architecture</td></tr>
+            <tr><td>Istio, KubeEdge, OpenYurt, seccomp, RBAC</td><td><span class="pill target">Target</span></td><td>Edge and zero-trust hardening</td></tr>
+            <tr><td>Suricata, Zeek, TensorFlow</td><td><span class="pill target">Target</span></td><td>Packet-level ingestion and deep models</td></tr>
+            <tr><td>OAuth 2.0 / OpenID, federated learning</td><td><span class="pill target">Target</span></td><td>Future work</td></tr>
           </table>
         </div>
       </div>
     </section>
   </main>
+
+  <footer>
+    Live numbers come from Prometheus scraping your network functions. Panels tagged <em>config</em> describe the repository and are not measured.
+    Nothing on this page is generated unless the yellow SAMPLE DATA banner is showing.
+  </footer>
 </div>
 
 <script>
 (() => {
   'use strict';
-  const $ = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll(s));
-  const el = (tag, cls, text) => { const e = document.createElement(tag); if(cls) e.className = cls; if(text!==undefined) e.textContent = text; return e; };
+
+  /* ---------- helpers ---------- */
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
   const NS = 'http://www.w3.org/2000/svg';
-  const svgEl = (tag, attrs = {}, text) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text!==undefined) e.textContent = text; return e; };
+  const svgEl = (tag, attrs = {}, text) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text !== undefined) e.textContent = text; return e; };
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ignore */ } }
+  };
   const fmtInt = n => (n == null ? '—' : Math.round(n).toLocaleString('en-US'));
+  const fmtRate = n => (n == null ? '—' : (n < 10 ? n.toFixed(1) : Math.round(n).toString()));
   const hhmmss = d => d.toTimeString().slice(0, 8);
 
-  const POLL_MS = 5000, WINDOW_S = 900;
-  const TOTALS = { amf_req:'amf_requests_total', amf_threat:'amf_threats_total', amf_blocked:'amf_blocked_total', ausf_req:'ausf_requests_total', ausf_ok:'ausf_auth_success_total', ausf_fail:'ausf_auth_failure_total', smf_req:'smf_requests_total', smf_sess:'smf_session_created_total', nrf_req:'nrf_requests_total', nrf_reg:'nrf_registrations_total' };
+  /* ---------- configuration ---------- */
+  const POLL_MS = 5000;
+  const WINDOW_S = 900;                       // chart window: 15 minutes
+  const TOTALS = {                            // metric names exposed by core/*.py
+    amf_req: 'amf_requests_total',
+    amf_threat: 'amf_threats_total',
+    amf_blocked: 'amf_blocked_total',
+    ausf_req: 'ausf_requests_total',
+    ausf_ok: 'ausf_auth_success_total',
+    ausf_fail: 'ausf_auth_failure_total',
+    smf_req: 'smf_requests_total',
+    smf_sess: 'smf_session_created_total',
+    nrf_req: 'nrf_requests_total',
+    nrf_reg: 'nrf_registrations_total'
+  };
   const SERIES = [
-    { key:'req', color:'var(--cyan)', label:'Requests/min', expr:'sum(rate(amf_requests_total[1m]))*60' },
-    { key:'blocked', color:'var(--amber)', label:'Blocked/min', expr:'sum(rate(amf_blocked_total[1m]))*60' },
-    { key:'threat', color:'var(--red)', label:'AI threats/min', expr:'sum(rate(amf_threats_total[1m]))*60' }
+    { key: 'req',     color: 'var(--cyan)',  label: 'Requests/min',   expr: 'sum(rate(amf_requests_total[1m]))*60' },
+    { key: 'blocked', color: 'var(--amber)', label: 'Blocked/min',    expr: 'sum(rate(amf_blocked_total[1m]))*60' },
+    { key: 'threat',  color: 'var(--red)',   label: 'AI threats/min', expr: 'sum(rate(amf_threats_total[1m]))*60' }
   ];
   const NFS = [
-    { id:'amf', name:'AMF', role:'Access & mobility', req:'amf_req' },
-    { id:'ausf', name:'AUSF', role:'Authentication', req:'ausf_req' },
-    { id:'smf', name:'SMF', role:'Session mgmt', req:'smf_req' },
-    { id:'nrf', name:'NRF', role:'NF Registry', req:'nrf_req' }
+    { id: 'amf',  name: 'AMF',  port: 5000, role: 'Access and mobility. Runs the AI check and slice allowlist.', req: 'amf_req' },
+    { id: 'ausf', name: 'AUSF', port: 5002, role: 'Authentication of the UE.', req: 'ausf_req' },
+    { id: 'smf',  name: 'SMF',  port: 5003, role: 'PDU session management.', req: 'smf_req' },
+    { id: 'nrf',  name: 'NRF',  port: 5001, role: 'Registry of network functions.', req: 'nrf_req' }
   ];
 
-  const state = { prom:'http://localhost:9090', alerts:'../ai/alerts.log', sample:false, prev:null, events:[], chart:null, timer:null, busy:false, errored:false };
+  /* ---------- state ---------- */
+  const params = new URLSearchParams(location.search);
+  const defaultProm = (location.protocol === 'https:' ? 'https:' : 'http:') + '//' + (location.hostname || 'localhost') + ':9090';
+  const state = {
+    prom: params.get('prom') || store.get('prom') || defaultProm,
+    alerts: params.get('alerts') || store.get('alerts') || '../ai/alerts.log',
+    sample: false,
+    prev: null,
+    events: [],
+    chart: null,
+    timer: null,
+    busy: false
+  };
 
-  const promBase = () => state.prom.trim().replace(/\/+$/, '');
+  /* ---------- Prometheus access ---------- */
+  function promBase() {
+    let u = state.prom.trim().replace(/\/+$/, '');
+    if (!/^https?:\/\//i.test(u)) u = 'http://' + u;
+    return u;
+  }
   async function promGet(path, query) {
     const url = new URL(promBase() + path);
     for (const k in query) url.searchParams.set(k, query[k]);
-    const r = await fetch(url, { cache:'no-store' });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const r = await fetch(url, { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status + ' from Prometheus');
     const j = await r.json();
-    if (j.status !== 'success') throw new Error('Query failed');
+    if (j.status !== 'success') throw new Error(j.error || 'Prometheus query failed');
     return j.data;
   }
   async function liveSnapshot() {
     const keys = Object.keys(TOTALS);
     const [vals, upData] = await Promise.all([
-      Promise.all(keys.map(k => promGet('/api/v1/query', { query:'sum('+TOTALS[k]+')' }).then(d => d.result.length ? Number(d.result[0].value[1]) : null))),
-      promGet('/api/v1/query', { query:'up{job=~"amf|ausf|smf|nrf"}' })
+      Promise.all(keys.map(k => promGet('/api/v1/query', { query: 'sum(' + TOTALS[k] + ')' })
+        .then(d => (d.result.length ? Number(d.result[0].value[1]) : null)))),
+      promGet('/api/v1/query', { query: 'up{job=~"amf|ausf|smf|nrf"}' })
     ]);
-    const totals = {}; keys.forEach((k,i) => totals[k] = vals[i]);
-    const up = {}; upData.result.forEach(r => { up[r.metric.job] = r.value[1] === '1'; });
+    const totals = {}; keys.forEach((k, i) => { totals[k] = vals[i]; });
+    const up = {};
+    upData.result.forEach(r => { const j = r.metric.job; up[j] = (up[j] !== false) && r.value[1] === '1'; });
     return { totals, up };
   }
   async function liveSeries() {
-    const end = Math.floor(Date.now()/1000), start = end - WINDOW_S;
+    const end = Math.floor(Date.now() / 1000), start = end - WINDOW_S;
     const out = {};
     await Promise.all(SERIES.map(async s => {
-      const d = await promGet('/api/v1/query_range', { query:s.expr, start, end, step:10 });
+      const d = await promGet('/api/v1/query_range', { query: s.expr, start, end, step: 10 });
       out[s.key] = d.result.length ? d.result[0].values.map(v => [Number(v[0]), Number(v[1])]) : [];
     }));
     return out;
   }
 
+  /* ---------- sample data (only when the user asks for it) ---------- */
   const sample = {
-    t:null, series:null,
+    t: null, series: null,
     init() {
-      this.t = { amf_req:120, amf_threat:2, amf_blocked:9, ausf_req:110, ausf_ok:110, ausf_fail:0, smf_req:108, smf_sess:108, nrf_req:108, nrf_reg:108 };
-      const now = Math.floor(Date.now()/1000);
-      this.series = { req:[], blocked:[], threat:[] };
-      for (let i = WINDOW_S/10; i >= 0; i--) {
-        const ts = now - i*10;
-        this.series.req.push([ts, 8 + Math.random()*10]);
-        this.series.blocked.push([ts, Math.random()*2]);
+      this.t = { amf_req: 120, amf_threat: 2, amf_blocked: 9, ausf_req: 110, ausf_ok: 110, ausf_fail: 0, smf_req: 108, smf_sess: 108, nrf_req: 108, nrf_reg: 108 };
+      const now = Math.floor(Date.now() / 1000);
+      this.series = { req: [], blocked: [], threat: [] };
+      for (let i = WINDOW_S / 10; i >= 0; i--) {
+        const ts = now - i * 10;
+        this.series.req.push([ts, 8 + Math.random() * 10]);
+        this.series.blocked.push([ts, Math.random() * 2]);
         this.series.threat.push([ts, Math.random() < 0.1 ? 1 : 0]);
       }
     },
     tick() {
-      const t = this.t, n = Math.floor(Math.random()*6), bad = Math.random()<0.15?1:0, deny = Math.random()<0.2?1:0;
-      t.amf_req += n+bad+deny; t.amf_threat += bad; t.amf_blocked += bad+deny;
+      const t = this.t, n = Math.floor(Math.random() * 6), bad = Math.random() < 0.15 ? 1 : 0, deny = Math.random() < 0.2 ? 1 : 0;
+      t.amf_req += n + bad + deny; t.amf_threat += bad; t.amf_blocked += bad + deny;
       t.ausf_req += n; t.ausf_ok += n; t.smf_req += n; t.smf_sess += n; t.nrf_req += n; t.nrf_reg += n;
-      const now = Math.floor(Date.now()/1000);
-      this.series.req.push([now, n*6+6]); this.series.blocked.push([now, (bad+deny)*6]); this.series.threat.push([now, bad*6]);
+      const now = Math.floor(Date.now() / 1000);
+      this.series.req.push([now, n * 6 + 6]); this.series.blocked.push([now, (bad + deny) * 6]); this.series.threat.push([now, bad * 6]);
       for (const k in this.series) while (this.series[k].length && this.series[k][0][0] < now - WINDOW_S) this.series[k].shift();
-      return { totals:{...t}, up:{ amf:true, ausf:true, smf:true, nrf:true } };
+      return { totals: { ...t }, up: { amf: true, ausf: true, smf: true, nrf: true } };
     }
   };
 
-  function setStatus(kind, text) { const s = $('#status'); s.className = 'status ' + kind; $('#statusText').textContent = text; }
+  /* ---------- rendering ---------- */
+  function setStatus(kind, text) {
+    const s = $('#status'); s.className = 'status ' + kind; $('#statusText').textContent = text;
+  }
+  function setTags(mode) {
+    const label = { chartTag: { live: 'live', sample: 'sample data', off: 'no connection' },
+                    feedTag: { live: 'derived from counter changes', sample: 'sample data', off: 'no connection' } };
+    ['chartTag', 'feedTag'].forEach(id => { const t = $('#' + id); t.className = 'tag' + (mode === 'live' ? ' live' : ''); t.textContent = label[id][mode]; });
+  }
   function renderKpis(cur) {
     const t = cur.totals;
     $('#k-req').textContent = fmtInt(t.amf_req);
     $('#k-blocked').textContent = fmtInt(t.amf_blocked);
     $('#k-threat').textContent = fmtInt(t.amf_threat);
     $('#k-sess').textContent = fmtInt(t.smf_sess);
-    const upCount = NFS.filter(n => cur.up[n.id]).length;
-    $('#k-up').textContent = upCount + ' / ' + NFS.length;
-    $('#k-up').className = 'value ' + (upCount === NFS.length ? 'c-green' : 'c-red');
+    const jobs = NFS.map(n => cur.up[n.id]);
+    const upCount = jobs.filter(v => v === true).length;
+    const known = jobs.filter(v => v !== undefined).length;
+    const kUp = $('#k-up');
+    kUp.textContent = known ? upCount + ' / ' + NFS.length : '—';
+    kUp.className = 'value ' + (known && upCount === NFS.length ? 'c-green' : 'c-red');
+
     $('#d-threat').textContent = fmtInt(t.amf_threat);
-    $('#d-other').textContent = fmtInt(Math.max(0, (t.amf_blocked||0) - (t.amf_threat||0)));
-    $('#d-share').textContent = t.amf_req > 0 ? ((t.amf_blocked/t.amf_req)*100).toFixed(1) + '%' : '—';
+    const other = (t.amf_blocked != null && t.amf_threat != null) ? Math.max(0, t.amf_blocked - t.amf_threat) : null;
+    $('#d-other').textContent = fmtInt(other);
+    $('#d-share').textContent = (t.amf_req > 0 && t.amf_blocked != null) ? (t.amf_blocked / t.amf_req * 100).toFixed(1) + '%' : '—';
     $('#d-fail').textContent = fmtInt(t.ausf_fail);
   }
   function renderNFs(cur) {
     const box = $('#nfCards'); box.replaceChildren();
+    const t = cur.totals;
     NFS.forEach(nf => {
-      const c = el('div','card nf');
-      const top = el('div','top'); top.append(el('span','name',nf.name));
-      top.append(el('span','pill ' + (cur.up[nf.id] ? 'up' : 'down'), cur.up[nf.id] ? 'UP' : 'DOWN'));
-      c.append(top, el('div','', nf.role));
+      const c = el('div', 'card nf');
+      const top = el('div', 'top');
+      top.append(el('span', 'name', nf.name));
+      const up = cur.up[nf.id];
+      top.append(el('span', 'pill ' + (up === undefined ? 'unknown' : up ? 'up' : 'down'), up === undefined ? 'NO DATA' : up ? 'UP' : 'DOWN'));
+      c.append(top, el('div', 'role', nf.role));
       const dl = el('dl');
-      dl.append(el('dt','','Requests'), el('dd','', fmtInt(cur.totals[nf.req])));
-      c.append(dl); box.append(c);
+      const add = (k, v) => { dl.append(el('dt', '', k), el('dd', '', v)); };
+      add('Port', String(nf.port));
+      add('Requests', fmtInt(t[nf.req]));
+      if (nf.id === 'amf') { add('Blocked', fmtInt(t.amf_blocked)); add('AI threats', fmtInt(t.amf_threat)); }
+      if (nf.id === 'ausf') { add('Auth success', fmtInt(t.ausf_ok)); add('Auth failure', fmtInt(t.ausf_fail)); }
+      if (nf.id === 'smf') add('Sessions created', fmtInt(t.smf_sess));
+      if (nf.id === 'nrf') add('Registrations', fmtInt(t.nrf_reg));
+      c.append(dl);
+      box.append(c);
     });
   }
-  function niceMax(v) { const p = Math.pow(10, Math.floor(Math.log10(v))), n = v/p; return (n<=1?1:n<=2?2:n<=5?5:10)*p; }
+  function niceMax(v) {
+    const p = Math.pow(10, Math.floor(Math.log10(v))), n = v / p;
+    return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * p;
+  }
   function renderChart(series, emptyMsg) {
     const svg = $('#chart'); svg.replaceChildren();
-    const W = 960, H = 280, m = { l:46, r:12, t:12, b:26 };
+    const W = 960, H = 280, m = { l: 46, r: 12, t: 12, b: 26 };
     const pts = SERIES.flatMap(s => series[s.key] || []);
-    if (!pts.length) { svg.append(svgEl('text',{x:W/2,y:H/2,'text-anchor':'middle'}, emptyMsg||'No data.')); state.chart = null; return; }
-    const t1 = Math.max(...pts.map(p=>p[0])), t0 = t1 - WINDOW_S;
-    const ymax = niceMax(Math.max(1, ...pts.map(p=>p[1])));
-    const x = t => m.l + (t-t0)/WINDOW_S*(W-m.l-m.r);
-    const y = v => H - m.b - (v/ymax)*(H-m.t-m.b);
-    for (let i = 0; i <= 4; i++) {
-      const yy = y(ymax*i/4);
-      svg.append(svgEl('line',{x1:m.l,x2:W-m.r,y1:yy,y2:yy,stroke:'#223049'}));
-      svg.append(svgEl('text',{x:m.l-6,y:yy+4,'text-anchor':'end'}, String(Math.round(ymax*i/4))));
+    if (!pts.length) {
+      svg.append(svgEl('text', { x: W / 2, y: H / 2, 'text-anchor': 'middle' }, emptyMsg || 'No data in the last 15 minutes. Send some requests to the AMF.'));
+      state.chart = null; return;
     }
-    SERIES.forEach(s => {
-      const data = series[s.key] || []; if (!data.length) return;
-      const d = data.map((p,i) => (i?'L':'M') + x(p[0]).toFixed(1) + ' ' + y(p[1]).toFixed(1)).join(' ');
-      svg.append(svgEl('path',{d,fill:'none',style:'stroke:'+s.color,'stroke-width':2}));
+    const t1 = Math.max(...pts.map(p => p[0])), t0 = t1 - WINDOW_S;
+    const ymax = niceMax(Math.max(1, ...pts.map(p => p[1])));
+    const x = t => m.l + (t - t0) / WINDOW_S * (W - m.l - m.r);
+    const y = v => H - m.b - (v / ymax) * (H - m.t - m.b);
+    for (let i = 0; i <= 4; i++) {
+      const v = ymax * i / 4, yy = y(v);
+      svg.append(svgEl('line', { x1: m.l, x2: W - m.r, y1: yy, y2: yy, stroke: '#223049', 'stroke-width': 1 }));
+      svg.append(svgEl('text', { x: m.l - 6, y: yy + 4, 'text-anchor': 'end' }, v >= 10 ? String(Math.round(v)) : v.toFixed(1)));
+    }
+    [[0, '-15 min'], [300, '-10 min'], [600, '-5 min'], [900, 'now']].forEach(([off, label]) => {
+      svg.append(svgEl('text', { x: x(t0 + off), y: H - 8, 'text-anchor': off === 0 ? 'start' : off === 900 ? 'end' : 'middle' }, label));
     });
-    state.chart = { series, t0, x };
+    SERIES.forEach(s => {
+      const data = series[s.key] || [];
+      if (!data.length) return;
+      const d = data.map((p, i) => (i ? 'L' : 'M') + x(p[0]).toFixed(1) + ' ' + y(p[1]).toFixed(1)).join(' ');
+      svg.append(svgEl('path', { d, fill: 'none', style: 'stroke:' + s.color, 'stroke-width': 2, 'stroke-linejoin': 'round' }));
+    });
+    const cross = svgEl('line', { y1: m.t, y2: H - m.b, stroke: '#93a3bb', 'stroke-width': 1, 'stroke-dasharray': '3 3', visibility: 'hidden' });
+    svg.append(cross);
+    state.chart = { series, t0, t1, x, cross, W };
   }
-  function pushEvent(level, text) { state.events.unshift({ t:new Date(), level, text }); if (state.events.length > 60) state.events.pop(); renderFeed(); }
+  function bindChartHover() {
+    const svg = $('#chart'), tip = $('#tip'), box = svg.parentElement;
+    const hide = () => { tip.style.display = 'none'; if (state.chart) state.chart.cross.setAttribute('visibility', 'hidden'); };
+    svg.addEventListener('mouseleave', hide);
+    svg.addEventListener('mousemove', ev => {
+      const c = state.chart; if (!c) return;
+      const rect = svg.getBoundingClientRect();
+      const px = (ev.clientX - rect.left) / rect.width * c.W;
+      const t = c.t0 + Math.min(1, Math.max(0, (px - 46) / (c.W - 46 - 12))) * WINDOW_S;
+      const near = key => {
+        const d = c.series[key] || []; if (!d.length) return null;
+        return d.reduce((a, b) => (Math.abs(b[0] - t) < Math.abs(a[0] - t) ? b : a));
+      };
+      const first = near('req') || near('blocked') || near('threat'); if (!first) return;
+      c.cross.setAttribute('x1', c.x(first[0])); c.cross.setAttribute('x2', c.x(first[0])); c.cross.setAttribute('visibility', 'visible');
+      tip.replaceChildren(el('div', '', hhmmss(new Date(first[0] * 1000))));
+      SERIES.forEach(s => { const p = near(s.key); tip.append(el('div', '', s.label + ': ' + (p ? fmtRate(p[1]) : '—'))); });
+      tip.style.display = 'block';
+      const bx = box.getBoundingClientRect();
+      tip.style.left = Math.min(ev.clientX - bx.left + 12, bx.width - 160) + 'px';
+      tip.style.top = Math.max(0, ev.clientY - bx.top - 20) + 'px';
+    });
+  }
+  function pushEvent(level, text) {
+    state.events.unshift({ t: new Date(), level, text });
+    if (state.events.length > 60) state.events.pop();
+    renderFeed();
+  }
   function renderFeed() {
     const ul = $('#feed'); ul.replaceChildren();
-    if (!state.events.length) { const li = el('li'); li.append(el('time'), el('span','lv info'), el('span','','Waiting…')); ul.append(li); return; }
-    state.events.forEach(e => { const li = el('li'); li.append(el('time','',hhmmss(e.t)), el('span','lv '+e.level), el('span','',e.text)); ul.append(li); });
+    if (!state.events.length) {
+      const li = el('li'); li.append(el('time'), el('span', 'lv info'), el('span', '', 'Waiting for the first change in the counters…')); ul.append(li); return;
+    }
+    state.events.forEach(e => {
+      const li = el('li');
+      li.append(el('time', '', hhmmss(e.t)), el('span', 'lv ' + e.level), el('span', '', e.text));
+      ul.append(li);
+    });
   }
   function deriveEvents(prev, cur) {
     if (!prev) return;
-    const d = k => { const a = prev.totals[k], b = cur.totals[k]; if (a==null||b==null) return 0; return b>=a ? b-a : b; };
+    const d = k => {
+      const a = prev.totals[k], b = cur.totals[k];
+      if (a == null || b == null) return 0;
+      return b >= a ? b - a : b;                 // a drop means the counter restarted
+    };
     const threat = d('amf_threat');
-    if (threat > 0) pushEvent('bad', threat + ' AI-detected threat(s) blocked');
+    if (threat > 0) pushEvent('bad', 'AI engine flagged ' + threat + ' request' + (threat > 1 ? 's' : '') + ' as anomalous and blocked ' + (threat > 1 ? 'them' : 'it') + ' (HTTP 403)');
+    const other = Math.max(0, d('amf_blocked') - threat);
+    if (other > 0) pushEvent('warn', other + ' request' + (other > 1 ? 's' : '') + ' blocked by the slice allowlist or a failed authentication');
+    const fail = d('ausf_fail');
+    if (fail > 0) pushEvent('warn', fail + ' failed authentication' + (fail > 1 ? 's' : '') + ' at AUSF');
     const sess = d('smf_sess');
-    if (sess > 0) pushEvent('ok', sess + ' PDU session(s) created');
+    if (sess > 0) pushEvent('ok', sess + ' PDU session' + (sess > 1 ? 's' : '') + ' created at SMF');
+    const reg = d('nrf_reg');
+    if (reg > 0) pushEvent('info', reg + ' registration' + (reg > 1 ? 's' : '') + ' stored at NRF');
+    NFS.forEach(nf => {
+      if (prev.up[nf.id] !== undefined && cur.up[nf.id] !== undefined && prev.up[nf.id] !== cur.up[nf.id]) {
+        pushEvent(cur.up[nf.id] ? 'ok' : 'bad', nf.name + ' is now ' + (cur.up[nf.id] ? 'UP' : 'DOWN'));
+      }
+    });
   }
-  function parseAlertLine(line) { const out = {}; line.split('|').forEach(p => { const i = p.indexOf('='); if (i>0) out[p.slice(0,i).trim().toUpperCase()] = p.slice(i+1).trim(); }); return out; }
+
+  /* ---------- alerts.log panel ---------- */
+  function parseAlertLine(line) {
+    const out = {};
+    line.split('|').forEach(part => {
+      const i = part.indexOf('=');
+      if (i > 0) out[part.slice(0, i).trim().toUpperCase()] = part.slice(i + 1).trim();
+    });
+    return out;
+  }
   function renderAlertsTable(rows, total, isSample) {
     const body = $('#alertsBody'); body.replaceChildren();
-    if (!rows.length) { body.append(el('div','empty','No THREAT lines yet.')); return; }
+    if (!rows.length) { body.append(el('div', 'empty', 'No THREAT lines yet.')); return; }
     const table = el('table');
-    const head = el('tr'); ['UE','Slice','RPM','Failed auth'].forEach((h,i) => head.append(el('th', i>1?'num':'', h)));
+    const head = el('tr'); ['UE', 'Slice', 'Requests/min', 'Failed auth'].forEach((h, i) => head.append(Object.assign(el('th', i > 1 ? 'num' : '', h))));
     table.append(head);
-    rows.forEach(r => { const tr = el('tr'); tr.append(el('td','mono', r.UE||'—'), el('td','mono', r.SLICE||'—'), el('td','num', r.RPM||'—'), el('td','num', r.FAILS||'—')); table.append(tr); });
-    body.append(table, el('p','note', (isSample?'Sample rows. ':'') + 'Showing ' + rows.length + ' of ' + total + ' detections.'));
+    rows.forEach(r => {
+      const tr = el('tr');
+      tr.append(el('td', 'mono', r.UE || '—'), el('td', 'mono', r.SLICE || '—'), el('td', 'num', r.RPM || '—'), el('td', 'num', r.FAILS || '—'));
+      table.append(tr);
+    });
+    const wrapT = el("div"); wrapT.style.overflowX = "auto"; wrapT.append(table);
+    body.append(wrapT, el('p', 'note', (isSample ? 'Sample rows. ' : '') + 'Showing the latest ' + rows.length + ' of ' + total + ' detections. Older log lines have no request or failure counts.'));
   }
   async function pollAlerts() {
     const tag = $('#alertsTag');
     if (state.sample) {
       tag.textContent = 'sample'; tag.className = 'tag';
-      renderAlertsTable([{UE:'sample-ue-1', SLICE:'sample-slice', RPM:'160', FAILS:'0'}], 1, true);
+      renderAlertsTable([{ UE: 'sample-ue-1', SLICE: 'sample-slice', RPM: '160', FAILS: '0' }, { UE: 'sample-ue-2', SLICE: 'sample-slice', RPM: '152', FAILS: '1' }], 2, true);
       return;
     }
     try {
-      const r = await fetch(state.alerts, { cache:'no-store' });
+      const r = await fetch(state.alerts, { cache: 'no-store' });
       if (!r.ok) throw new Error('HTTP ' + r.status);
       const lines = (await r.text()).split('\n').filter(l => l.startsWith('THREAT'));
       tag.textContent = 'alerts.log'; tag.className = 'tag live';
       renderAlertsTable(lines.slice(-12).reverse().map(parseAlertLine), lines.length, false);
     } catch (e) {
-      tag.textContent = 'not reachable'; tag.className = 'tag';
-      $('#alertsBody').replaceChildren(el('div','empty','Cannot read ' + state.alerts));
+      tag.textContent = 'alerts.log not reachable'; tag.className = 'tag';
+      const body = $('#alertsBody'); body.replaceChildren();
+      body.append(el('div', 'empty', 'Cannot read ' + state.alerts + '.'),
+        el('p', 'note', 'Serve the repository root (for example: python3 -m http.server 8000) and open /Dashboard/ so ../ai/alerts.log is reachable, or enter another URL above.'));
     }
   }
+
+  /* ---------- help box for connection problems ---------- */
   function showHelp(err) {
-    $('#help').classList.add('show');
-    $('#helpTitle').textContent = 'Cannot read metrics (' + err.message + ').';
-    $('#helpBody').replaceChildren(el('p','','Start Prometheus or click "Use sample data".'));
+    const h = $('#help'); h.classList.add('show');
+    $('#helpTitle').textContent = 'Cannot read metrics from Prometheus at ' + promBase() + ' (' + err.message + ').';
+    const body = $('#helpBody'); body.replaceChildren();
+    const ul = el('ul');
+    [
+      'Check that Prometheus is running and that the address above is reachable from this browser.',
+      'If the network functions require client certificates (mTLS), Prometheus must scrape them over https. In prometheus.yml add scheme: https and a tls_config with ca_file, cert_file, key_file and server_name for each job; otherwise every job shows DOWN.',
+      'To show the dashboard without a running platform, press "Use sample data" (clearly labelled).'
+    ].forEach(t => ul.append(el('li', '', t)));
+    body.append(ul);
   }
   function hideHelp() { $('#help').classList.remove('show'); }
 
+  /* ---------- polling ---------- */
   async function poll() {
     if (state.busy) return; state.busy = true;
     try {
       let cur, series;
       if (state.sample) { cur = sample.tick(); series = sample.series; }
       else { [cur, series] = await Promise.all([liveSnapshot(), liveSeries()]); }
-      deriveEvents(state.prev, cur); state.prev = cur;
-      renderKpis(cur); renderNFs(cur); renderChart(series); hideHelp(); state.errored = false;
+      deriveEvents(state.prev, cur);
+      state.prev = cur;
+      renderKpis(cur); renderNFs(cur); renderChart(series);
+      hideHelp();
+      state.errored = false;
+      setTags(state.sample ? 'sample' : 'live');
       if (state.sample) setStatus('sample', 'Sample data · ' + hhmmss(new Date()));
-      else setStatus('ok', 'LIVE · ' + hhmmss(new Date()));
+      else setStatus('ok', 'Live from Prometheus · updated ' + hhmmss(new Date()));
     } catch (e) {
-      setStatus('bad', 'Prometheus unreachable'); renderChart({}, 'No data: Prometheus unreachable.'); showHelp(e);
-      if (!state
+      setStatus('bad', 'Prometheus unreachable');
+      setTags('off');
+      renderChart({}, 'No data: Prometheus is unreachable.');
+      showHelp(e);
+      if (!state.errored) { pushEvent('bad', 'Cannot read metrics: ' + e.message); state.errored = true; }
+    } finally {
+      state.busy = false;
+    }
+    pollAlerts();
+  }
+  function restart() {
+    clearInterval(state.timer);
+    state.prev = null; state.errored = false;
+    $('#banner').classList.toggle('show', state.sample);
+    $('#sampleBtn').textContent = state.sample ? 'Use live data' : 'Use sample data';
+    poll();
+    state.timer = setInterval(poll, POLL_MS);
+  }
+
+  /* ---------- wiring ---------- */
+  $('#promUrl').value = state.prom;
+  $('#alertsUrl').value = state.alerts;
+  $('#settings').addEventListener('submit', ev => {
+    ev.preventDefault();
+    state.prom = $('#promUrl').value.trim() || defaultProm;
+    state.alerts = $('#alertsUrl').value.trim() || '../ai/alerts.log';
+    store.set('prom', state.prom); store.set('alerts', state.alerts);
+    state.sample = false; state.events = []; renderFeed(); restart();
+  });
+  $('#sampleBtn').addEventListener('click', () => {
+    state.sample = !state.sample;
+    if (state.sample) sample.init();
+    state.events = []; renderFeed(); restart();
+  });
+  $$('nav button').forEach(b => b.addEventListener('click', () => {
+    $$('nav button').forEach(x => x.setAttribute('aria-selected', String(x === b)));
+    $$('section.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + b.dataset.tab));
+  }));
+  bindChartHover();
+  restart();
+})();
+</script>
+</body>
+</html>
