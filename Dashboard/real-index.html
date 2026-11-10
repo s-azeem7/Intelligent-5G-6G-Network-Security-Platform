@@ -28,7 +28,7 @@
   }
   .wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
 
-  /* ── HEADER (Cyber Security Look) ── */
+  /* ── HEADER ── */
   header { 
     border-bottom: 1px solid var(--line); 
     background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); 
@@ -36,10 +36,7 @@
   }
   .head { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; padding: 14px 0; }
   h1 { 
-    font-size: 20px; 
-    margin: 0; 
-    letter-spacing: .5px; 
-    font-weight: 800;
+    font-size: 20px; margin: 0; letter-spacing: .5px; font-weight: 800;
     background: -webkit-linear-gradient(45deg, var(--cyan), var(--violet));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -74,19 +71,11 @@
   
   /* ── CARDS ── */
   .card { 
-    background: var(--panel); 
-    border: 1px solid var(--line); 
-    border-left: 3px solid var(--cyan); 
-    border-radius: var(--radius); 
-    padding: 14px 16px; 
-    min-width: 0;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--cyan); 
+    border-radius: var(--radius); padding: 14px 16px; min-width: 0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
-  .card:hover { 
-    transform: translateY(-2px); 
-    box-shadow: 0 8px 15px rgba(0,0,0,0.5);
-  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
   .card h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin: 0 0 10px; font-weight: 600; }
   .kpi .label { color: var(--muted); font-size: 12px; }
   .kpi .value { font-size: 30px; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums; }
@@ -115,21 +104,10 @@
   
   /* ── TERMINAL STYLE FEED ── */
   ul.feed { 
-    list-style: none; margin: 0; padding: 10px; 
-    max-height: 330px; overflow: auto; 
-    background: #05080f; 
-    border: 1px solid #1e293b; 
-    border-radius: 6px;
-    font-family: 'Courier New', monospace;
+    list-style: none; margin: 0; padding: 10px; max-height: 330px; overflow: auto; 
+    background: #05080f; border: 1px solid #1e293b; border-radius: 6px; font-family: 'Courier New', monospace;
   }
-  ul.feed li { 
-    display: grid; 
-    grid-template-columns: 64px 12px 1fr; 
-    gap: 8px; 
-    padding: 8px 0; 
-    border-bottom: 1px dashed #1e293b; 
-    align-items: baseline; 
-  }
+  ul.feed li { display: grid; grid-template-columns: 64px 12px 1fr; gap: 8px; padding: 8px 0; border-bottom: 1px dashed #1e293b; align-items: baseline; }
   ul.feed li:last-child { border-bottom: none; }
   ul.feed time { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 12px; }
   ul.feed .lv { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
@@ -156,11 +134,10 @@
   .chip.allow { border-color: #1f6b52; color: var(--green); background: #0f3a2c; }
   .chip.deny { border-color: #7a2a2a; color: var(--red); background: #471717; }
   
-  ol.steps { margin: 0; padding-left: 20px; } ol.steps li { margin: 4px 0; }
+  ol.steps { margin: 0; padding-left: 20px; } ol.steps li { margin: 4px 0; transition: color 0.3s; }
   .note { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
   .help { border-left: 3px solid var(--amber); background: #261d08; padding: 10px 14px; border-radius: 0 8px 8px 0; margin-bottom: 12px; display: none; }
   .help.show { display: block; }
-  .help pre { margin: 6px 0 0; white-space: pre-wrap; }
   footer { color: var(--muted); font-size: 12px; margin-top: 18px; border-top: 1px solid var(--line); padding-top: 12px; }
   @media (max-width: 560px) { .kpi .value { font-size: 26px; } input[type=text] { min-width: 100%; } }
 </style>
@@ -182,7 +159,7 @@
       <label for="alertsUrl">alerts.log</label>
       <input type="text" id="alertsUrl" spellcheck="false">
       <button type="submit">Connect</button>
-      <button type="button" id="sampleBtn" title="Show clearly labelled sample numbers, for example when Prometheus is not running">Use sample data</button>
+      <button type="button" id="sampleBtn" title="Show sample numbers if Prometheus is not running">Use sample data</button>
     </form>
   </div>
 </header>
@@ -193,7 +170,7 @@
     <button role="tab" aria-selected="true" data-tab="overview">Overview</button>
     <button role="tab" aria-selected="false" data-tab="nfs">Network functions</button>
     <button role="tab" aria-selected="false" data-tab="detect">Threat detection</button>
-    <button role="tab" aria-selected="false" data-tab="platform">Platform and scope</button>
+    <button role="tab" aria-selected="false" data-tab="platform">Platform &amp; CI/CD</button>
   </nav>
 
   <main>
@@ -202,7 +179,7 @@
       <div id="helpBody"></div>
     </div>
 
-    <!-- ============ OVERVIEW ============ -->
+    <!-- OVERVIEW -->
     <section class="tab active" id="tab-overview">
       <div class="grid kpis">
         <div class="card kpi"><div class="label">AMF requests</div><div class="value c-cyan" id="k-req">&mdash;</div><div class="hint">amf_requests_total</div></div>
@@ -220,7 +197,7 @@
             <span><i style="background:var(--amber)"></i>Blocked per minute</span>
             <span><i style="background:var(--red)"></i>AI threats per minute</span>
           </div>
-          <div class="chartbox"><svg id="chart" viewBox="0 0 960 280" role="img" aria-label="Line chart of requests, blocked requests and AI threats per minute over the last 15 minutes"></svg><div id="tip"></div></div>
+          <div class="chartbox"><svg id="chart" viewBox="0 0 960 280"></svg><div id="tip"></div></div>
           <p class="note">Per-minute rates are computed by Prometheus from the AMF counters over a 1-minute window.</p>
         </div>
         <div class="card" style="grid-column: 1 / -1">
@@ -230,13 +207,12 @@
       </div>
     </section>
 
-    <!-- ============ NETWORK FUNCTIONS ============ -->
+    <!-- NETWORK FUNCTIONS -->
     <section class="tab" id="tab-nfs">
       <div class="grid two" id="nfCards"></div>
-
       <div class="card" style="margin-top:12px">
         <h2>Registration call flow in <code>core/amf.py</code> <span class="tag cfg">from the code</span></h2>
-        <svg viewBox="0 0 760 236" role="img" aria-label="UE request enters the AMF, which checks the AI engine and the slice allowlist, then calls AUSF, SMF and NRF over mutual TLS">
+        <svg viewBox="0 0 760 236">
           <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#93a3bb"/></marker></defs>
           <g stroke="#223049" fill="#0e1420">
             <rect x="8" y="78" width="96" height="54" rx="10"/>
@@ -249,39 +225,32 @@
             <text x="56" y="100" style="fill:#e6edf7;font-size:14px;font-weight:700">UE</text>
             <text x="56" y="118">POST /ue-contexts</text>
             <text x="285" y="76" style="fill:#e6edf7;font-size:14px;font-weight:700">AMF :5000</text>
-            <text x="285" y="100">1. AI check (rate, failures)</text>
+            <text x="285" y="100">1. AI check</text>
             <text x="285" y="120">2. slice allowlist</text>
-            <text x="285" y="140">3. orchestrates the rest</text>
+            <text x="285" y="140">3. orchestrates</text>
             <text x="580" y="36" style="fill:#e6edf7;font-size:14px;font-weight:700">AUSF :5002</text>
             <text x="580" y="110" style="fill:#e6edf7;font-size:14px;font-weight:700">SMF :5003</text>
             <text x="580" y="184" style="fill:#e6edf7;font-size:14px;font-weight:700">NRF :5001</text>
           </g>
           <g stroke="#93a3bb" stroke-width="1.5" fill="none" marker-end="url(#arr)">
-            <path d="M104 105 H188"/>
-            <path d="M380 82 L518 32"/>
-            <path d="M380 105 H518"/>
-            <path d="M380 128 L518 180"/>
+            <path d="M104 105 H188"/><path d="M380 82 L518 32"/><path d="M380 105 H518"/><path d="M380 128 L518 180"/>
           </g>
           <g text-anchor="middle">
-            <text x="438" y="42">authenticate</text>
-            <text x="450" y="97">PDU session</text>
-            <text x="428" y="182">register NF</text>
+            <text x="438" y="42">authenticate</text><text x="450" y="97">PDU session</text><text x="428" y="182">register NF</text>
             <text x="380" y="228" style="font-size:11px">AMF to AUSF, SMF, NRF: mutual TLS, client certificate required</text>
           </g>
         </svg>
-        <p class="note">AUSF in this prototype always returns SUCCESS, so the failed-authentication counter normally stays at 0.</p>
       </div>
     </section>
 
-    <!-- ============ THREAT DETECTION ============ -->
+    <!-- THREAT DETECTION -->
     <section class="tab" id="tab-detect">
       <div class="grid kpis">
         <div class="card kpi"><div class="label">AI-detected threats</div><div class="value c-red" id="d-threat">&mdash;</div><div class="hint">amf_threats_total</div></div>
-        <div class="card kpi"><div class="label">Blocked by allowlist or auth</div><div class="value c-amber" id="d-other">&mdash;</div><div class="hint">blocked minus AI threats</div></div>
+        <div class="card kpi"><div class="label">Blocked by allowlist/auth</div><div class="value c-amber" id="d-other">&mdash;</div><div class="hint">blocked minus AI threats</div></div>
         <div class="card kpi"><div class="label">Share of requests blocked</div><div class="value" id="d-share">&mdash;</div><div class="hint">blocked / requests</div></div>
         <div class="card kpi"><div class="label">Failed authentications</div><div class="value c-violet" id="d-fail">&mdash;</div><div class="hint">ausf_auth_failure_total</div></div>
       </div>
-
       <div class="grid two" style="margin-top:12px">
         <div class="card">
           <h2>Slice allowlist <span class="tag cfg">config: ALLOWED_SLICES in amf.py</span></h2>
@@ -290,26 +259,14 @@
             <span class="chip allow">slice-b &#10003; allowed</span>
             <span class="chip deny">any other slice &#10007; HTTP 403</span>
           </div>
-          <p class="note">The slice ID is read from the request body (default <code>slice-a</code> if missing). Metrics are not labelled per slice, so the counts on this page are totals.</p>
         </div>
         <div class="card">
           <h2>Detection model <span class="tag cfg">config: ai/train_model.py</span></h2>
           <table>
-            <tr><th scope="row">Algorithm</th><td>scikit-learn IsolationForest, 100 trees, contamination 0.2</td></tr>
-            <tr><th scope="row">Features</th><td>requests per minute, failed authentications (per UE and slice, last 60 s)</td></tr>
-            <tr><th scope="row">Training data</th><td>11 hand-written synthetic rows</td></tr>
-            <tr><th scope="row">Output</th><td><code>-1</code> = anomaly, request blocked with HTTP 403 and written to <code>alerts.log</code></td></tr>
-            <tr><th scope="row">Observed trigger</th><td>about 144 or more requests per minute with no failed logins (measured on the committed model)</td></tr>
+            <tr><th scope="row">Algorithm</th><td>IsolationForest, 100 trees</td></tr>
+            <tr><th scope="row">Features</th><td>RPM, failed authentications</td></tr>
+            <tr><th scope="row">Output</th><td><code>-1</code> = anomaly (HTTP 403)</td></tr>
           </table>
-        </div>
-        <div class="card">
-          <h2>Decision order inside the AMF <span class="tag cfg">from the code</span></h2>
-          <ol class="steps">
-            <li>Count this UE's requests and failures in the last 60 seconds.</li>
-            <li>Ask the model. If anomalous: HTTP 403 <code>blocked_by_ai</code>, increment threat and blocked counters, append to <code>alerts.log</code>.</li>
-            <li>Check the slice against the allowlist. If not allowed: HTTP 403 <code>unauthorized slice</code>, increment blocked.</li>
-            <li>Authenticate at AUSF, create the session at SMF, register at NRF, reply 201.</li>
-          </ol>
         </div>
         <div class="card" style="grid-column: 1 / -1">
           <h2>Latest detections <span class="tag live" id="alertsTag">alerts.log</span></h2>
@@ -318,51 +275,42 @@
       </div>
     </section>
 
-    <!-- ============ PLATFORM ============ -->
+    <!-- PLATFORM & CI/CD -->
     <section class="tab" id="tab-platform">
       <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(420px, 1fr))">
         <div class="card">
           <h2>Security controls <span class="tag cfg">from the repository</span></h2>
           <table>
             <tr><th>Control</th><th>How it is implemented</th></tr>
-            <tr><td>Mutual TLS</td><td>All four functions use <code>CERT_REQUIRED</code>; private CA and per-function certificates from <code>gen_certs.sh</code></td></tr>
-            <tr><td>Micro-segmentation</td><td>NetworkPolicies in <code>security/</code>: default deny, AMF flows, NRF only from AMF</td></tr>
-            <tr><td>Tenant isolation</td><td>Namespaces tenant-a, tenant-b, tenant-industrial, tenant-medical with <code>edge-isolation.yaml</code></td></tr>
-            <tr><td>Slice protection</td><td>Allowlist plus AI anomaly check at the AMF</td></tr>
-            <tr><td>Monitoring</td><td>Prometheus scrapes /metrics from each function every 5 s; Grafana alert</td></tr>
-            <tr><td>Compliance checks</td><td>Shell scripts in <code>compliance/</code>: deployment health, ETSI-style, security and zero-trust checks</td></tr>
+            <tr><td>Mutual TLS</td><td>All functions use <code>CERT_REQUIRED</code>; certs from <code>gen_certs.sh</code></td></tr>
+            <tr><td>Micro-segmentation</td><td>NetworkPolicies in <code>security/</code></td></tr>
+            <tr><td>Tenant isolation</td><td>Namespaces tenant-a, tenant-b, etc.</td></tr>
           </table>
         </div>
         <div class="card">
           <h2>CI/CD pipeline <span class="tag cfg">Jenkinsfile stages</span></h2>
-          <ol class="steps">
+          <button id="runCiBtn" style="margin-bottom:12px; background:#0f3a2c; color:var(--green); border-color:#1f6b52; font-weight:700;">▶ Run CI/CD Simulation</button>
+          <ol class="steps" id="cicdList">
             <li>Checkout from GitHub</li>
             <li>Generate certificates</li>
             <li>Compliance checks</li>
-            <li>Build base image, then AMF, NRF, AUSF, SMF images in parallel</li>
-            <li>Security scan (Trivy), optional stage</li>
+            <li>Build Base Image</li>
+            <li>Build AMF, NRF, AUSF, SMF</li>
+            <li>Security scan (Trivy)</li>
             <li>Deploy to Kubernetes (K3s)</li>
-            <li>Verify rollout of all four deployments</li>
+            <li>Verify rollout</li>
           </ol>
-          <p class="note">This list is the pipeline definition. Build results live in Jenkins.</p>
         </div>
         <div class="card" style="grid-column: 1 / -1">
           <h2>What is built and what is target design</h2>
           <table>
-            <tr><th>Component on the slides</th><th>Status</th><th>Note</th></tr>
-            <tr><td>AMF, AUSF, SMF, NRF as Flask services</td><td><span class="pill built">Built</span></td><td>Functional model, not a full 3GPP stack</td></tr>
+            <tr><th>Component</th><th>Status</th><th>Note</th></tr>
+            <tr><td>AMF, AUSF, SMF, NRF Flask services</td><td><span class="pill built">Built</span></td><td>Functional model</td></tr>
             <tr><td>Docker, K3s orchestration</td><td><span class="pill built">Built</span></td><td>One replica per function</td></tr>
-            <tr><td>Mutual TLS between functions</td><td><span class="pill built">Built</span></td><td>Private CA, no automated rotation</td></tr>
-            <tr><td>NetworkPolicies and tenant namespaces</td><td><span class="pill built">Built</span></td><td>Policies only; no workloads in tenant namespaces</td></tr>
-            <tr><td>Slice allowlist</td><td><span class="pill built">Built</span></td><td>Logical slice IDs, not end-to-end slicing</td></tr>
-            <tr><td>AI anomaly detection (IsolationForest)</td><td><span class="pill built">Built</span></td><td>Small synthetic training set</td></tr>
-            <tr><td>Prometheus and Grafana alerting</td><td><span class="pill built">Built</span></td><td>Counters from the AMF and other functions</td></tr>
-            <tr><td>Jenkins CI/CD</td><td><span class="pill partial">Partial</span></td><td>Manual trigger; image scan stage optional</td></tr>
-            <tr><td>Compliance automation</td><td><span class="pill partial">Partial</span></td><td>Health and configuration checks, not 3GPP conformance</td></tr>
-            <tr><td>Open5GS core, UPF, gNodeB</td><td><span class="pill target">Target</span></td><td>Reference architecture</td></tr>
-            <tr><td>Istio, KubeEdge, OpenYurt, seccomp, RBAC</td><td><span class="pill target">Target</span></td><td>Edge and zero-trust hardening</td></tr>
-            <tr><td>Suricata, Zeek, TensorFlow</td><td><span class="pill target">Target</span></td><td>Packet-level ingestion and deep models</td></tr>
-            <tr><td>OAuth 2.0 / OpenID, federated learning</td><td><span class="pill target">Target</span></td><td>Future work</td></tr>
+            <tr><td>Mutual TLS between functions</td><td><span class="pill built">Built</span></td><td>Private CA</td></tr>
+            <tr><td>AI anomaly detection</td><td><span class="pill built">Built</span></td><td>IsolationForest</td></tr>
+            <tr><td>Jenkins CI/CD</td><td><span class="pill partial">Partial</span></td><td>Manual trigger</td></tr>
+            <tr><td>Open5GS, Istio, Suricata</td><td><span class="pill target">Target</span></td><td>Reference architecture</td></tr>
           </table>
         </div>
       </div>
@@ -370,8 +318,7 @@
   </main>
 
   <footer>
-    Live numbers come from Prometheus scraping your network functions. Panels tagged <em>config</em> describe the repository and are not measured.
-    Nothing on this page is generated unless the yellow SAMPLE DATA banner is showing.
+    Live numbers come from Prometheus scraping your network functions. Panels tagged <em>config</em> describe the repository.
   </footer>
 </div>
 
@@ -379,36 +326,84 @@
 (() => {
   'use strict';
 
-  /* ---------- helpers ---------- */
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
   const NS = 'http://www.w3.org/2000/svg';
   const svgEl = (tag, attrs = {}, text) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text !== undefined) e.textContent = text; return e; };
-  const store = {
-    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
-    set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ignore */ } }
-  };
+  const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
   const fmtInt = n => (n == null ? '—' : Math.round(n).toLocaleString('en-US'));
-  const fmtRate = n => (n == null ? '—' : (n < 10 ? n.toFixed(1) : Math.round(n).toString()));
   const hhmmss = d => d.toTimeString().slice(0, 8);
 
-  /* ---------- configuration ---------- */
   const POLL_MS = 5000;
-  const WINDOW_S = 900;                       // chart window: 15 minutes
-  const TOTALS = {                            // metric names exposed by core/*.py
-    amf_req: 'amf_requests_total',
-    amf_threat: 'amf_threats_total',
-    amf_blocked: 'amf_blocked_total',
-    ausf_req: 'ausf_requests_total',
-    ausf_ok: 'ausf_auth_success_total',
-    ausf_fail: 'ausf_auth_failure_total',
-    smf_req: 'smf_requests_total',
-    smf_sess: 'smf_session_created_total',
-    nrf_req: 'nrf_requests_total',
-    nrf_reg: 'nrf_registrations_total'
+  const WINDOW_S = 900;
+  const TOTALS = {
+    amf_req: 'amf_requests_total', amf_threat: 'amf_threats_total', amf_blocked: 'amf_blocked_total',
+    ausf_req: 'ausf_requests_total', ausf_ok: 'ausf_auth_success_total', ausf_fail: 'ausf_auth_failure_total',
+    smf_req: 'smf_requests_total', smf_sess: 'smf_session_created_total', nrf_req: 'nrf_requests_total', nrf_reg: 'nrf_registrations_total'
   };
   const SERIES = [
-    { key: 'req',     color: 'var(--cyan)',  label: 'Requests/min',   expr: 'sum(rate(amf_requests_total[1m]))*60' },
-    { key: 'blocked', color: 'var(--amber)', label: 'Blocked/min',    expr: 'sum(rate(amf_blocked_total[1m]))*60' },
-    { key
+    { key: 'req', color: 'var(--cyan)', label: 'Requests/min', expr: 'sum(rate(amf_requests_total[1m]))*60' },
+    { key: 'blocked', color: 'var(--amber)', label: 'Blocked/min', expr: 'sum(rate(amf_blocked_total[1m]))*60' },
+    { key: 'threat', color: 'var(--red)', label: 'AI threats/min', expr: 'sum(rate(amf_threats_total[1m]))*60' }
+  ];
+  const NFS = [
+    { id: 'amf', name: 'AMF', port: 5000, role: 'Access and mobility', req: 'amf_req' },
+    { id: 'ausf', name: 'AUSF', port: 5002, role: 'Authentication', req: 'ausf_req' },
+    { id: 'smf', name: 'SMF', port: 5003, role: 'Session management', req: 'smf_req' },
+    { id: 'nrf', name: 'NRF', port: 5001, role: 'NF Registry', req: 'nrf_req' }
+  ];
+
+  const params = new URLSearchParams(location.search);
+  const defaultProm = (location.protocol === 'https:' ? 'https:' : 'http:') + '//' + (location.hostname || 'localhost') + ':9090';
+  const state = {
+    prom: params.get('prom') || store.get('prom') || defaultProm,
+    alerts: params.get('alerts') || store.get('alerts') || '../ai/alerts.log',
+    sample: false, prev: null, events: [], chart: null, timer: null, busy: false, errored: false
+  };
+
+  function promBase() {
+    let u = state.prom.trim().replace(/\/+$/, '');
+    if (!/^https?:\/\//i.test(u)) u = 'http://' + u;
+    return u;
+  }
+  async function promGet(path, query) {
+    const url = new URL(promBase() + path);
+    for (const k in query) url.searchParams.set(k, query[k]);
+    const r = await fetch(url, { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (j.status !== 'success') throw new Error(j.error || 'Prometheus query failed');
+    return j.data;
+  }
+  async function liveSnapshot() {
+    const keys = Object.keys(TOTALS);
+    const [vals, upData] = await Promise.all([
+      Promise.all(keys.map(k => promGet('/api/v1/query', { query: 'sum(' + TOTALS[k] + ')' }).then(d => (d.result.length ? Number(d.result[0].value[1]) : null)))),
+      promGet('/api/v1/query', { query: 'up{job=~"amf|ausf|smf|nrf"}' })
+    ]);
+    const totals = {}; keys.forEach((k, i) => { totals[k] = vals[i]; });
+    const up = {};
+    upData.result.forEach(r => { const j = r.metric.job; up[j] = (up[j] !== false) && r.value[1] === '1'; });
+    return { totals, up };
+  }
+  async function liveSeries() {
+    const end = Math.floor(Date.now() / 1000), start = end - WINDOW_S;
+    const out = {};
+    await Promise.all(SERIES.map(async s => {
+      const d = await promGet('/api/v1/query_range', { query: s.expr, start, end, step: 10 });
+      out[s.key] = d.result.length ? d.result[0].values.map(v => [Number(v[0]), Number(v[1])]) : [];
+    }));
+    return out;
+  }
+
+  const sample = {
+    t: null, series: null,
+    init() {
+      this.t = { amf_req: 120, amf_threat: 2, amf_blocked: 9, ausf_req: 110, ausf_ok: 110, ausf_fail: 0, smf_req: 108, smf_sess: 108, nrf_req: 108, nrf_reg: 108 };
+      const now = Math.floor(Date.now() / 1000);
+      this.series = { req: [], blocked: [], threat: [] };
+      for (let i = WINDOW_S / 10; i >= 0; i--) {
+        const ts = now - i * 10;
+        this.series.req.push([ts, 8 + Math.random() * 10]);
+        this.series.blocked.push([ts, Math.random() * 2
