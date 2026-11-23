@@ -1,9 +1,13 @@
+
 pipeline {
     agent any
 
     environment {
         DOCKER_BUILDKIT = '1'
         COMPOSE_DOCKER_CLI_BUILD = '1'
+
+        // Kubernetes access for all Jenkins stages
+        KUBECONFIG = '/var/lib/jenkins/.kube/config'
     }
 
     stages {
@@ -15,12 +19,21 @@ pipeline {
             }
         }
 
-        // 🔐 NEW: Generate certificates before building images
         stage('Generate Certificates') {
             steps {
                 sh '''
                     chmod +x gen_certs.sh
                     ./gen_certs.sh
+                '''
+            }
+        }
+
+        stage('Verify Kubernetes Access') {
+            steps {
+                sh '''
+                    echo "===== Checking Kubernetes Connection ====="
+                    kubectl get nodes
+                    kubectl get pods
                 '''
             }
         }
@@ -97,20 +110,39 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f amf-deployment.yaml'
-                sh 'kubectl apply -f nrf-deployment.yaml'
-                sh 'kubectl apply -f ausf-deployment.yaml'
-                sh 'kubectl apply -f smf-deployment.yaml'
+                sh '''
+                    echo "===== Deploying AMF ====="
+                    kubectl apply -f amf-deployment.yaml
+
+                    echo "===== Deploying NRF ====="
+                    kubectl apply -f nrf-deployment.yaml
+
+                    echo "===== Deploying AUSF ====="
+                    kubectl apply -f ausf-deployment.yaml
+
+                    echo "===== Deploying SMF ====="
+                    kubectl apply -f smf-deployment.yaml
+                '''
             }
         }
 
         stage('Verify Rollout') {
             steps {
                 sh '''
+                    echo "===== Verifying AMF ====="
                     kubectl rollout status deployment/amf-deployment --timeout=120s
+
+                    echo "===== Verifying NRF ====="
                     kubectl rollout status deployment/nrf-deployment --timeout=120s
+
+                    echo "===== Verifying AUSF ====="
                     kubectl rollout status deployment/ausf-deployment --timeout=120s
+
+                    echo "===== Verifying SMF ====="
                     kubectl rollout status deployment/smf-deployment --timeout=120s
+
+                    echo "===== Final Pod Status ====="
+                    kubectl get pods
                 '''
             }
         }
