@@ -1,5 +1,5 @@
 #!/bin/bash
-
+export KUBECONFIG=/var/lib/jenkins/.kube/config
 echo "========== 3GPP Compliance Check =========="
 
 # 1. Core Network Pods must be running
